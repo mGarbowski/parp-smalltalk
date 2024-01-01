@@ -1,2 +1,5 @@
-# parp-smalltalk
-Assignment for Programing Paradigms course @ Warsaw University of Technology
+# Smalltalk - projekt
+* Mikołaj Garbowski
+* Maskym Bieńkowski
+
+TODO
