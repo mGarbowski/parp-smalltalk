@@ -2,4 +2,7 @@
 * Mikołaj Garbowski
 * Maskym Bieńkowski
 
-TODO
+## Uruchomienie
+```shell
+gst src/main.st
+```
