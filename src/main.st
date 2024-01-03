@@ -12,7 +12,8 @@ Collaborators:
 * ..."
 
 Object subclass: GameController [
-    | isGameOver |
+    | isGameOver game |
+    directions := #('north' 'south' 'east' 'west').
 
     introductionText := #(
         'A long time ago, in a galaxy far, far away...'
@@ -52,8 +53,11 @@ Object subclass: GameController [
     ]
 
     init [
-        isGameOver := false
+        isGameOver := false.
+        game := Game new.
     ]
+
+    getGame [^game]
 
     "Print strings from array in separate lines."
     printLines: anArray [
@@ -75,12 +79,11 @@ Object subclass: GameController [
 
     "Run the game."
     run [
-        | cmd isUnknown room |
+        | cmd isUnknown |
 
         self printIntroduction.
         self printInstructions.
-        room := Room new.
-        Transcript show: room.
+        self handleLook.
 
         "Game loop."
         [isGameOver] whileFalse: [
@@ -91,6 +94,11 @@ Object subclass: GameController [
             cmd = 'instructions' ifTrue: [
                 self printInstructions.
                 isUnknown := false
+            ].
+
+            (cmd startsWith: 'go') ifTrue: [
+                isUnknown := false.
+                self handleGo: cmd
             ].
 
             cmd = 'quit' ifTrue: [
@@ -117,6 +125,43 @@ Object subclass: GameController [
         ]
 
     ]
+
+    handleLook [
+        Transcript show: self getGame getCurrentRoom getDescription; cr
+    ]
+
+    handleGo: cmd [
+        |direction path currRoom nextRoom|
+        (cmd size < 4) ifTrue: [
+            self printLines: #('Specify direction where you want to go').
+            ^nil
+        ].
+
+        direction := cmd copyFrom: 4 to: cmd size.
+        (directions includes: direction) ifFalse: [
+            self printLines: #(
+                'Invalid direction'
+                'You can go north, south, east or west'
+            ).
+            ^nil
+        ].
+
+        currRoom := self getGame getCurrentRoom.
+        (currRoom hasPath: direction) ifFalse: [
+            self printLines: #('You cannot go in this direction from here').
+            ^nil
+        ].
+
+        (currRoom canGoInDirection: direction) ifFalse: [
+            self printLines: #('This path is locked').
+            ^nil
+        ].
+
+        path := currRoom getDirections at: direction.
+        nextRoom := path getToRoom.
+        self getGame setCurrentRoom: nextRoom.
+        self handleLook
+    ]
 ]
 
-GameController new test.
+GameController new run.

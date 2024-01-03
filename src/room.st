@@ -31,6 +31,17 @@ Interactable subclass: Room [
 
     getDirections [^ directions]
     setDirections: someDirections [directions := someDirections]
+
+    hasPath: direction [
+        ^(directions includesKey: direction)
+    ]
+
+    canGoInDirection: direction [
+        |path|
+        (self hasPath: direction) ifFalse: [^false].
+        path := directions at: direction.
+        ^path getIsLocked not
+    ]
 ]
 
 "Factory for creating all room objects"
