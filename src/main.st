@@ -11,7 +11,7 @@ Responsibilities:
 Collaborators:
 * ..."
 
-Object subclass: Game [
+Object subclass: GameController [
     | isGameOver |
 
     introductionText := #(
@@ -44,7 +44,7 @@ Object subclass: Game [
         ''
     ).
  
-    Game class >> new [
+    GameController class >> new [
         | g |
         g := super new.
         g init.
@@ -105,29 +105,18 @@ Object subclass: Game [
     ]
 
     test [
-        |lockerRoom corridorOne path tmp dict|
-        lockerRoom := Room
-            name: 'locker room'
-            description: 'locker room description'
-            hint: 'locker room hint'.
-        lockerRoom getItems add: 'key'.
+        |rooms tmp|
+        rooms := RoomFactory rooms.
 
-        Transcript show: lockerRoom getName; cr.
+        rooms do: [ :room |
+            Transcript show: room getName; cr.
+            room getDirections at: 'east' ifPresent: [ :path |
+                Transcript show: 'is connected to the east with '.
+                Transcript show: path getToRoom getName; cr; cr.
+            ]
+        ]
 
-        corridorOne := Room new.
-        corridorOne setName: 'corridor one'.
-        corridorOne setDescription: 'corridor description'.
-        corridorOne setHint: 'corridor hint'.
-
-        path := Path new.
-        path setToRoom: corridorOne.
-        path setIsLocked: false.
-
-        lockerRoom getDirections at: 'east' put: path.
-
-        tmp := lockerRoom getDirections at: 'east'.
-        tmp := tmp getIsLocked ifFalse: [Transcript show: 'Unlocked'].
     ]
 ]
 
-Game new test.
+GameController new test.
