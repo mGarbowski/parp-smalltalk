@@ -105,20 +105,28 @@ Object subclass: Game [
     ]
 
     test [
-        |room collection interactable|
-        room := Room new.
-        room setName: 'locker room'.
+        |lockerRoom corridorOne path tmp dict|
+        lockerRoom := Room
+            name: 'locker room'
+            description: 'locker room description'
+            hint: 'locker room hint'.
+        lockerRoom getItems add: 'key'.
 
-        interactable := Interactable new.
-        interactable setName: 'key'.
+        Transcript show: lockerRoom getName; cr.
 
-        collection := OrderedCollection new.
-        collection add: interactable.
-        collection add: room.
-        collection do: [ :el |
-            Transcript show: el getName; cr.
-        ]
+        corridorOne := Room new.
+        corridorOne setName: 'corridor one'.
+        corridorOne setDescription: 'corridor description'.
+        corridorOne setHint: 'corridor hint'.
 
+        path := Path new.
+        path setToRoom: corridorOne.
+        path setIsLocked: false.
+
+        lockerRoom getDirections at: 'east' put: path.
+
+        tmp := lockerRoom getDirections at: 'east'.
+        tmp := tmp getIsLocked ifFalse: [Transcript show: 'Unlocked'].
     ]
 ]
 
