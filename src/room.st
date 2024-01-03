@@ -1,4 +1,4 @@
-Object subclass: Room [
+Interactable subclass: Room [
     | name description hint items interactables directions |
 
     Room class >> new [
@@ -11,15 +11,6 @@ Object subclass: Room [
     ]
 
     "Getters and setters"
-    getDescription [^ description]
-    setDescription: value [description := value]
-
-    getName [^ name]
-    setName: value [name := value]
-
-    getHint [^ hint]
-    setHint: aHint [hint := aHint]
-
     getItems [^ items]
     setItems: someItems [items := someItems]
 

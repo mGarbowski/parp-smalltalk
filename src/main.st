@@ -105,20 +105,20 @@ Object subclass: Game [
     ]
 
     test [
-        |room items|
-        items := OrderedCollection new.
-        items add: 'key'.
-        items add: 'map'.
+        |room collection interactable|
         room := Room new.
         room setName: 'locker room'.
-        room setDescription: 'A dimly lit room...'.
-        room setItems: items.
-        Transcript show: room getName; cr.
-        Transcript show: room getDirections; cr.
 
-        room getItems do: [:item |
-            Transcript show: item; cr.
+        interactable := Interactable new.
+        interactable setName: 'key'.
+
+        collection := OrderedCollection new.
+        collection add: interactable.
+        collection add: room.
+        collection do: [ :el |
+            Transcript show: el getName; cr.
         ]
+
     ]
 ]
 
