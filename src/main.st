@@ -75,10 +75,12 @@ Object subclass: Game [
 
     "Run the game."
     run [
-        | cmd isUnknown |
+        | cmd isUnknown room |
 
         self printIntroduction.
         self printInstructions.
+        room := Room new.
+        Transcript show: room.
 
         "Game loop."
         [isGameOver] whileFalse: [
@@ -101,6 +103,23 @@ Object subclass: Game [
             ]
         ]
     ]
+
+    test [
+        |room items|
+        items := OrderedCollection new.
+        items add: 'key'.
+        items add: 'map'.
+        room := Room new.
+        room setName: 'locker room'.
+        room setDescription: 'A dimly lit room...'.
+        room setItems: items.
+        Transcript show: room getName; cr.
+        Transcript show: room getDirections; cr.
+
+        room getItems do: [:item |
+            Transcript show: item; cr.
+        ]
+    ]
 ]
 
-Game new run.
+Game new test.
