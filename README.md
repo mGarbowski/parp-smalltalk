@@ -1,6 +1,6 @@
 # Smalltalk - projekt
 * Mikołaj Garbowski
-* Maskym Bieńkowski
+* Maksym Bieńkowski
 
 ## Uruchomienie
 ```shell
