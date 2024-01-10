@@ -40,8 +40,12 @@ Object subclass: GameController [
     instructionsText := #(
         'Available commands are:'
         ''
-        'instructions  -- to see these instructions.'
-        'quit          -- to end the game and quit.'
+        'instructions  -- to see these instructions'
+        'go DIR        -- to go in DIR direction'
+        'look          -- to look around the room you are in'
+        'hint here     -- to see a hint about the room you are in'
+        'hint X        -- to see a hint about X'
+        'quit          -- to end the game and quit'
         ''
     ).
  
