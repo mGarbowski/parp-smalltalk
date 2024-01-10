@@ -58,6 +58,10 @@ Interactable subclass: Room [
         all addAll: self getInteractables.
         ^all
     ]
+
+    removeItem: item [
+        self getItems identityRemove: item
+    ]
 ]
 
 "Factory for creating all room objects"

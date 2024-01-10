@@ -43,6 +43,8 @@ Object subclass: GameController [
         'instructions  -- to see these instructions'
         'go DIR        -- to go in DIR direction'
         'look          -- to look around the room you are in'
+        'take X        -- to pick up X and store it in your inventory'
+        'inventory     -- to see your inventory'
         'hint here     -- to see a hint about the room you are in'
         'hint X        -- to see a hint about X'
         'quit          -- to end the game and quit'
@@ -115,6 +117,16 @@ Object subclass: GameController [
                 cmd = 'hint here'
                     ifTrue: [self handleHintHere]
                     ifFalse: [self handleHint: cmd]
+            ].
+
+            (cmd startsWith: 'take ') ifTrue: [
+                isUnknown := false.
+                self handleTake: cmd
+            ].
+
+            cmd = 'inventory' ifTrue: [
+                isUnknown := false.
+                self handleInventory
             ].
 
             cmd = 'quit' ifTrue: [
@@ -204,6 +216,29 @@ Object subclass: GameController [
         nextRoom := path getToRoom.
         self getGame setCurrentRoom: nextRoom.
         self handleLook
+    ]
+
+    handleTake: cmd [
+        |itemName roomItems item|
+        itemName := cmd copyFrom: 6 to: cmd size.
+        roomItems := self getGame getCurrentRoom getItems.
+        item := nil.
+
+        roomItems do: [:i |
+            i getName = itemName ifTrue: [item := i]
+        ].
+
+        item = nil
+            ifTrue: [Transcript show: 'I dont see that here...'; cr]
+            ifFalse: [
+                self getGame addItem: item.
+                self getGame getCurrentRoom removeItem: item.
+                Transcript show: 'Ok'; cr
+            ]
+    ]
+
+    handleInventory [
+        self printLines: self getGame listInventory
     ]
 ]
 
