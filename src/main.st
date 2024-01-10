@@ -101,6 +101,16 @@ Object subclass: GameController [
                 self handleGo: cmd
             ].
 
+            (cmd startsWith: 'look') ifTrue: [
+                self handleLook.
+                isUnknown := false
+            ].
+
+            cmd = 'hint here' ifTrue: [
+                self handleHintHere.
+                isUnknown := false
+            ].
+
             cmd = 'quit' ifTrue: [
                 isGameOver := true.
                 isUnknown := false
@@ -128,6 +138,13 @@ Object subclass: GameController [
 
     handleLook [
         Transcript show: self getGame getCurrentRoom getDescription; cr
+    ]
+
+    handleHintHere [
+        |room|
+        room := self getGame getCurrentRoom.
+        Transcript show: room getHint; cr.
+        self printLines: room listItems
     ]
 
     handleGo: cmd [

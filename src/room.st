@@ -42,6 +42,14 @@ Interactable subclass: Room [
         path := directions at: direction.
         ^path getIsLocked not
     ]
+
+    listItems [
+        |lines|
+        lines := OrderedCollection new.
+        lines add: 'Interactable items:'.
+        self getItems do: [ :i | lines add: i getName].
+        ^lines
+    ]
 ]
 
 "Factory for creating all room objects"
@@ -50,12 +58,13 @@ Object subclass: RoomFactory [
     "Factory methods for creating rooms populated with items and interactables"
 
     RoomFactory class >> lockerRoom [
-        |r|
+        |r lrk|
         r := Room
             name: 'locker room'
             description: 'locker room description'
             hint: 'locker room hint'.
-        r getItems add: 'key'.
+        lrk := ItemFactory lockerRoomKey.
+        r getItems add: lrk.
         ^r
     ]
 

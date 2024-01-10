@@ -5,6 +5,15 @@ Object subclass: Interactable [
         ^super new.
     ]
 
+    Interactable class >> name: aName description: aDescription hint: aHint [
+        |i|
+        i := super new.
+        i setName: aName.
+        i setDescription: aDescription.
+        i setHint: aHint.
+        ^i
+    ]
+
     getDescription [^ description]
     setDescription: value [description := value]
 
