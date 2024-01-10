@@ -42,6 +42,7 @@ Object subclass: GameController [
         ''
         'instructions  -- to see these instructions'
         'go DIR        -- to go in DIR direction'
+        'unlock DIR    -- to unlock doors in direction DIR'
         'look          -- to look around the room you are in'
         'take X        -- to pick up X and store it in your inventory'
         'inventory     -- to see your inventory'
@@ -127,6 +128,11 @@ Object subclass: GameController [
             cmd = 'inventory' ifTrue: [
                 isUnknown := false.
                 self handleInventory
+            ].
+
+            (cmd startsWith: 'unlock ') ifTrue: [
+                isUnknown := false.
+                self handleUnlock: cmd
             ].
 
             cmd = 'quit' ifTrue: [
@@ -239,6 +245,33 @@ Object subclass: GameController [
 
     handleInventory [
         self printLines: self getGame listInventory
+    ]
+
+    handleUnlock: cmd [
+        |query room path key|
+        room := self getGame getCurrentRoom.
+        query := cmd copyFrom: 8 to: cmd size.
+
+        (directions includes: query) ifTrue: [
+            (room hasPath: query) ifFalse: [
+                Transcript show: 'There is no path in this direction'; cr.
+                ^nil
+            ].
+
+            path := room getDirections at: query.
+            path getIsLocked ifFalse: [Transcript show: 'Path is already unlocked'; cr. ^nil].
+            key := path getOpenedBy.
+            self getGame getInventory do: [ :ie|
+                (ie getItem getName = key getName) ifTrue: [
+                    path setIsLocked: false.
+                    Transcript show: 'Ok'; cr.
+                    ^nil
+                ]
+            ].
+
+            Transcript show: 'You cannot open this'; cr.
+            ^nil
+        ]
     ]
 ]
 

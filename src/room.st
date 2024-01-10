@@ -97,7 +97,8 @@ Object subclass: RoomFactory [
 
         path1 := Path new.
         path1 setToRoom: corridorOne.
-        path1 setIsLocked: false.
+        path1 setIsLocked: true.
+        path1 setOpenedBy: (lockerRoom getItems at: 1).
         lockerRoom getDirections at: 'east' put: path1.
 
         path2 := Path new.
