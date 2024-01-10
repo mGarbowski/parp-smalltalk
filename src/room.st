@@ -50,6 +50,14 @@ Interactable subclass: Room [
         self getItems do: [ :i | lines add: i getName].
         ^lines
     ]
+
+    getAllInteractables [
+        |all|
+        all := OrderedCollection new.
+        all addAll: self getItems.
+        all addAll: self getInteractables.
+        ^all
+    ]
 ]
 
 "Factory for creating all room objects"

@@ -106,9 +106,11 @@ Object subclass: GameController [
                 isUnknown := false
             ].
 
-            cmd = 'hint here' ifTrue: [
-                self handleHintHere.
-                isUnknown := false
+            (cmd startsWith: 'hint ') ifTrue: [
+                isUnknown := false.
+                cmd = 'hint here'
+                    ifTrue: [self handleHintHere]
+                    ifFalse: [self handleHint: cmd]
             ].
 
             cmd = 'quit' ifTrue: [
@@ -145,6 +147,26 @@ Object subclass: GameController [
         room := self getGame getCurrentRoom.
         Transcript show: room getHint; cr.
         self printLines: room listItems
+    ]
+
+    "todo also handle items in the inventory"
+    handleHint: cmd [
+        |iName interactables found obj|
+
+        iName := cmd copyFrom: 6 to: cmd size.
+        interactables := self getGame getCurrentRoom getAllInteractables.
+        found := false.
+
+        interactables do: [ :i |
+            i getName = iName ifTrue: [
+                found := true.
+                obj := i.
+            ]
+        ].
+
+        found
+            ifTrue: [Transcript show: obj getHint; cr]
+            ifFalse: [Transcript show: 'I dont see that here...'; cr]
     ]
 
     handleGo: cmd [
