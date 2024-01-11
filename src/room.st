@@ -73,10 +73,32 @@ Object subclass: RoomFactory [
         |r lrk|
         r := Room
             name: 'locker room'
-            description: 'locker room description'
-            hint: 'locker room hint'.
+            description: #(
+                 'The locker room is dimly lit, with a faint hum of machinery in the air. Rows'
+                 'of lockers fill the space, closed and orderly. However, one locker catches'
+                 'your eye - slightly open, a hint of something inside. It seems like the owner'
+                 'forgot to lock it properly'
+                 'To the north, a heavy metal door labeled "Security" and a modern keypad next to it present themselves to you'
+                 'To the east, you see another door with no labels as to where it leads'
+            )
+            hint: #('You can interact with the locker, go north or go east, inspect the keypad next to security doors to find out more.').
         lrk := ItemFactory lockerRoomKey.
         r getItems add: lrk.
+        ^r
+    ]
+
+    RoomFactory class >> securityRoom [
+        |r|
+        r := Room
+            name: 'security room'
+            description: #(
+                'The security room is dimly lit, the soft glow of monitors casting a blue hue on'
+                'the walls. The air is cool, and the hum of electronic equipment fills the room.'
+                'Rows of monitors display surveillance footage, capturing glimpses of different'
+                'sections of the lab. The power control switches on the central console beckon,'
+                'suggesting a pivotal role in the functionality of the facility.'
+            )
+            hint: #('You can interact with the control panel or go south').
         ^r
     ]
 
@@ -84,12 +106,98 @@ Object subclass: RoomFactory [
         |r|
         r := Room new.
         r setName: 'corridor one'.
-        r setDescription: 'corridor description'.
-        r setHint: 'corridor hint'.
+        r setDescription: #(
+            'You find yourself in a dimly lit corridor, the ambient light casting faint shadows.'
+            'Directly ahead to the north, a door labeled "Generator Room" stands prominently.'
+            'Looking to the south, the corridor stretches away, its destination obscured by the dim lighting,'
+            'The western door leads to the locker room.'
+        ).
+        r setHint: #('You can go west, north, south').
         ^r
     ]
 
-    "Return OrderedCollection of all rooms connected with each other"
+    RoomFactory class >> corridorTwo [
+        |r|
+        r := Room
+            name: 'corridor two'
+            description: #(
+                'You are further down the corridor, to the west - entrance to the experiment chamber.'
+                'The air is heavy with the weight of past scientific endeavors ...or are those toxic fumes?'
+                'To the east - a locked door guards more secrets.'
+            )
+            hint: #('You can go north, east, west').
+        ^r
+    ]
+
+    RoomFactory class >> generatorRoom [
+        |r|
+        r := Room
+            name: 'generator room'
+            description: #(
+                'As you explore the generator room, the dormant generator at the center stands in'
+                'stark contrast to the adjacent ventilation shaft. The idle turbines offer a'
+                'glimpse into the halted functionality of the lab''s power source.'
+                'The ventilation shaft on the southern wall,'
+                'though vibrating with a faint breeze, seems large enough for someone to fit through.'
+            )
+            hint: #('You can interact with generator, vent or go south').
+        ^r
+    ]
+
+    RoomFactory class >> exitRoom [
+        |r|
+        r := Room
+            name: 'exit room'
+            description: #(
+                'As you''re crawling out of the ventilation shaft, you notice an elevator.'
+                'Finally, a way out of this maze!'
+            )
+            hint: #('You can interact with vent and elevator').
+        ^r
+    ]
+
+    RoomFactory class >> experimentRoom [
+        |r|
+        r := Room
+            name: 'experiment room'
+            description: #(
+                'You are in the experiment room. The floor is covered in a sticky, toxic sludge.'
+                'On the other side of the room, you see a small metal tool chest.'
+                'If you were only able to go through the sludge,'
+                'you could see what''s inside. The door was blown open by the failure of the experiment, it seems.'
+                'The broken door is laying next to where you stand.'
+            )
+            hint: #('You need to acquire some protective gear to walk through the toxic sludge.').
+        ^r
+    ]
+
+    RoomFactory class >> computerRoom [
+        |r|
+        r := Room
+            name: 'computer room'
+            description: #(
+                'As you step into the room bathed in soft light, you notice a solitary desk at'
+                'its center. On the desk rests a computer, its screen silent and'
+                'dark. The absence of the usual hum of electronic activity adds an eerie calm'
+                'to the room, leaving the space seemingly dormant.'
+                'To the west there is a door locked from this side.'
+            )
+            hint: #('You can interact with: computer, desk, vent or try the door to the west').
+        ^r
+    ]
+
+    RoomFactory class >> ventilationShaft [
+        |r|
+        r := Room
+            name: 'ventilation shaft'
+            description: #('You are in the vent shaft. You can proceed east, south or north')
+            hint: #('You can proceed east, south or north').
+        ^r
+    ]
+
+
+    "Return OrderedCollection of all rooms connected with each other
+    todo: maybe a separate Rooms class storing each room as a field would be better"
     RoomFactory class >> rooms [
         |lockerRoom corridorOne path1 path2 all|
         lockerRoom := RoomFactory lockerRoom.

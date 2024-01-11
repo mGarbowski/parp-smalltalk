@@ -161,13 +161,13 @@ Object subclass: GameController [
     ]
 
     handleLook [
-        Transcript show: self getGame getCurrentRoom getDescription; cr
+        self printLines: self getGame getCurrentRoom getDescription
     ]
 
     handleHintHere [
         |room|
         room := self getGame getCurrentRoom.
-        Transcript show: room getHint; cr.
+        self printLines: room getHint.
         self printLines: room listItems
     ]
 
