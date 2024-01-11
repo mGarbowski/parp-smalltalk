@@ -64,6 +64,36 @@ Interactable subclass: Room [
     ]
 ]
 
+Object subclass: Rooms [
+    |lockerRoom securityRoom corridorOne corridorTwo generatorRoom exitRoom experimentRoom computerRoom ventilationShaft|
+
+    Rooms class >> new [
+        |r|
+        r := super new.
+        ^r
+    ]
+
+    getLockerRoom [^lockerRoom]
+    setLockerRoom: r [lockerRoom := r]
+    getSecurityRoom [^securityRoom]
+    setSecurityRoom: r [securityRoom := r]
+    getCorridorOne [^corridorOne]
+    setCorridorOne: r [corridorOne := r]
+    getCorridorTwo [^corridorTwo]
+    setCorridorTwo: r [corridorTwo := r]
+    getGeneratorRoom [^generatorRoom]
+    setGeneratorRoom: r [generatorRoom := r]
+    getExitRoom [^exitRoom]
+    setExitRoom: r [exitRoom := r]
+    getExperimentRoom [^experimentRoom]
+    setExperimentRoom: r [experimentRoom := r]
+    getComputerRoom [^computerRoom]
+    setComputerRoom: r [computerRoom := r]
+    getVentilationShaft [^ventilationShaft]
+    setVentilationShaft: r [ventilationShaft := r]
+
+]
+
 "Factory for creating all room objects"
 Object subclass: RoomFactory [
 
@@ -196,28 +226,106 @@ Object subclass: RoomFactory [
     ]
 
 
-    "Return OrderedCollection of all rooms connected with each other
-    todo: maybe a separate Rooms class storing each room as a field would be better"
-    RoomFactory class >> rooms [
-        |lockerRoom corridorOne path1 path2 all|
-        lockerRoom := RoomFactory lockerRoom.
-        corridorOne := RoomFactory corridorOne.
+    "Return Rooms object populated with all rooms and with all paths added"
+    RoomFactory class >> getRooms [
+        |rooms p t k|
+        rooms := Rooms new.
+        rooms setLockerRoom: RoomFactory lockerRoom.
+        rooms setSecurityRoom: RoomFactory securityRoom.
+        rooms setCorridorOne: RoomFactory corridorOne.
+        rooms setCorridorTwo: RoomFactory corridorTwo.
+        rooms setGeneratorRoom: RoomFactory generatorRoom.
+        rooms setExitRoom: RoomFactory exitRoom.
+        rooms setExperimentRoom: RoomFactory experimentRoom.
+        rooms setComputerRoom: RoomFactory computerRoom.
+        rooms setVentilationShaft: RoomFactory ventilationShaft.
 
-        path1 := Path new.
-        path1 setToRoom: corridorOne.
-        path1 setIsLocked: true.
-        path1 setOpenedBy: (lockerRoom getItems at: 1).
-        lockerRoom getDirections at: 'east' put: path1.
+        "add paths"
 
-        path2 := Path new.
-        path2 setToRoom: lockerRoom.
-        path2 setIsLocked: false.
-        corridorOne getDirections at: 'west' put: path2.
+        "locker room"
+        p := Path new.
+        p setToRoom: rooms getCorridorOne.
+        p setIsLocked: true.
+        p setOpenedBy: ItemFactory lockerRoomKey.
+        rooms getLockerRoom getDirections at: 'east' put: p.
 
-        all := OrderedCollection new.
-        all add: lockerRoom.
-        all add: corridorOne.
+        p := Path new.
+        p setToRoom: rooms getSecurityRoom.
+        p setIsLocked: true.
+        rooms getLockerRoom getDirections at: 'north' put: p.
 
-        ^all.
+        "security room"
+        p := Path new.
+        p setToRoom: rooms getLockerRoom.
+        p setIsLocked: false.
+        rooms getSecurityRoom getDirections at: 'south' put: p.
+
+        "corridor one"
+        p := Path new.
+        p setToRoom: rooms getLockerRoom.
+        p setIsLocked: false.
+        rooms getCorridorOne getDirections at: 'west' put: p.
+
+        p := Path new.
+        p setToRoom: rooms getGeneratorRoom.
+        p setIsLocked: false.
+        rooms getCorridorOne getDirections at: 'north' put: p.
+
+        p := Path new.
+        p setToRoom: rooms getCorridorTwo.
+        p setIsLocked: false.
+        rooms getCorridorOne getDirections at: 'south' put: p.
+
+        "corridor two"
+        p := Path new.
+        p setToRoom: rooms getCorridorOne.
+        p setIsLocked: false.
+        rooms getCorridorTwo getDirections at: 'north' put: p.
+
+        p := Path new.
+        p setToRoom: rooms getExperimentRoom.
+        p setIsLocked: false.
+        rooms getCorridorTwo getDirections at: 'west' put: p.
+
+        p := Path new.
+        p setToRoom: rooms getComputerRoom.
+        p setIsLocked: true.
+        rooms getCorridorTwo getDirections at: 'east' put: p.
+
+        "generator room"
+        p := Path new.
+        p setToRoom: rooms getCorridorOne.
+        p setIsLocked: false.
+        rooms getGeneratorRoom getDirections at: 'south' put: p.
+
+        "experiment room"
+        p := Path new.
+        p setToRoom: rooms getCorridorTwo.
+        p setIsLocked: false.
+        rooms getExperimentRoom getDirections at: 'east' put: p.
+
+        "computer room"
+        p := Path new.
+        p setToRoom: rooms getCorridorTwo.
+        p setIsLocked: true.
+        rooms getComputerRoom getDirections at: 'west' put: p.
+
+        "ventilation shaft"
+        p := Path new.
+        p setToRoom: rooms getExitRoom.
+        p setIsLocked: false.
+        rooms getVentilationShaft getDirections at: 'east' put: p.
+
+        p := Path new.
+        p setToRoom: rooms getGeneratorRoom.
+        p setIsLocked: false.
+        rooms getVentilationShaft getDirections at: 'north' put: p.
+
+        p := Path new.
+        p setToRoom: rooms getComputerRoom.
+        p setIsLocked: false.
+        rooms getVentilationShaft getDirections at: 'south' put: p.
+
+        ^rooms
     ]
 ]

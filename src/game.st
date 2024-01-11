@@ -26,8 +26,8 @@ Object subclass: Game [
     Game class >> new [
         |g|
         g := super new.
-        g setAllRooms: RoomFactory rooms.
-        g setCurrentRoom: g getAllRooms first.
+        g setAllRooms: RoomFactory getRooms.
+        g setCurrentRoom: g getAllRooms getLockerRoom.
         g setInventory: OrderedCollection new.
         ^g
     ]

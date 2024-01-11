@@ -5,6 +5,15 @@ Object subclass: Path [
         ^super new.
     ]
 
+    Path class >> to: aRoom locked: isLocked key: aKey [
+        |p|
+        p := self new.
+        p setToRoom: aRoom.
+        p setIsLocked: isLocked.
+        p setOpenedBy: aKey.
+        ^p
+    ]
+
     getToRoom [^toRoom]
     setToRoom: aRoom [toRoom := aRoom]
 
