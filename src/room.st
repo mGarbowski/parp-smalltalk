@@ -94,7 +94,9 @@ Object subclass: Rooms [
 
 ]
 
-"Factory for creating all room objects"
+"Factory for creating all room objects
+todo populate rooms with items and interactables
+"
 Object subclass: RoomFactory [
 
     "Factory methods for creating rooms populated with items and interactables"
