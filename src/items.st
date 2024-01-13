@@ -65,4 +65,81 @@ Object subclass: ItemFactory [
             itemsInside: #(self labShoes).
     ]
 
+        ItemFactory class >> controlPanel [
+        ^ Interactable
+            name: 'control panel'
+            description: 'The central console stands prominently, adorned with an array of power control',
+                'switches. Their sleek design and illuminated indicators add a touch of modernity',
+                'to the room. Labels beside each switch hint at their specific functions. The',
+                'control panel exudes an air of authority, silently overseeing the lab''s intricate',
+                'systems from its place in the security room.',
+                'One switch catches your eye - it''s the elevator power supply',
+                'This is what you have been looking for!'
+            hint: 'You can use it to `power on` something'
+    ]
+
+    ItemFactory class >> ventEntrance [
+        ^ Interactable
+            name: 'vent'
+            description: 'A big, rectangular ventilation shaft large enough for a human to crawl inside'
+            hint: 'You can `enter` the vent'
+    ]
+
+    ItemFactory class >> computer [
+        ^ Interactable
+            name: 'computer'
+            description: 'On the desk, a computer sits dormant. Its screen is powered off, casting a',
+                'dark reflection in the quiet room. The keyboard awaits your interaction,',
+                'could its hard drives have some answers for you?'
+            hint: 'You can use it as a decorative piece or `power on computer`. to make better use of it.'
+    ]
+
+    ItemFactory class >> generator [
+        ^ Interactable
+            name: 'generator'
+            description: 'The emergency power generator looms with a single glowing cell within, flanked by two conspicuous empty slots,',
+                'rendering the machine silent and incomplete, waiting for its missing components.',
+                'In order to restore electricity in the lab, the two remaining cells have to be found.'
+            hint: 'Use `power on generator` to power it on'
+    ]
+
+    ItemFactory class >> brokenDoor [
+        ^ Interactable
+            name: 'broken door'
+            description: 'A massive door, ripped out of its hinges is laying on the floor next to the entrance it used to guard.'
+            hint: 'Maybe taking a closer look at it will reveal something?'
+    ]
+
+    ItemFactory class >> elevator [
+        ^ Interactable
+            name: 'elevator'
+            description: 'Approaching the elevator, you find it disabled, a security override in effect.',
+                'A prominent display blinks with a warning, indicating that access is restricted',
+                'and the elevator is currently non-operational. The usual hum of its machinery',
+                'is replaced by an eerie silence. Looks like the security staff can turn it on/off during emergencies.'
+            hint: 'To go inside use `enter elevator`'
+    ]
+
+    ItemFactory class >> desk [
+        ^ Interactable
+            name: 'desk'
+            description: 'The desk in the room is simple yet functional. It holds a powered-off computer',
+                'at its center. The smooth surface suggests a place for work or study, while',
+                'the surrounding space remains uncluttered, you bend to see what''s underneath it',
+                'There is a sticky note! It says "pass: rot13(XvetvfJnygre)"',
+                'What''s rot13? The computer nerds from the lab wouldn''t just leave a password in plain text for everyone to see'
+            hint: 'just google it'
+    ]
+
+    ItemFactory class >> keypad [
+        ^ Interactable
+            name: 'keypad'
+            description: 'A modern keypad, mounted beside the security room door, stands as the gateway to the lab.',
+                'It features a digital touchscreen with a numeric grid and softly backlit keys.',
+                'To enter, you must input the correct 6-digit code.'
+            hint: 'Use `enter keypad <code>` to enter a code',
+                'Only 6 digits? That''s only like 999 999 options, you can just brute force it...',
+                '...or look around for the code, it must be *somewhere*'
+    ]
+
 ]
