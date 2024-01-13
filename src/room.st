@@ -36,6 +36,27 @@ Interactable subclass: Room [
         ^(directions includesKey: direction)
     ]
 
+    getContainerItems [
+        |containerItems|
+        containerItems := OrderedCollection new.
+        (self getInteractables) do: [ :i | 
+            (i isMemberOf: Container) ifTrue: [
+                containerItems addAll: (i getItems).
+            ].
+        ].
+        ^containerItems.
+    ]
+
+    getInspectables [
+        |inspectables|
+        inspectables := OrderedCollection new.
+        inspectables addAll: self getInteractables.
+        inspectables addAll: self getItems.
+        inspectables addAll: self getContainerItems.
+        ^inspectables.
+    ]
+
+
     canGoInDirection: direction [
         |path|
         (self hasPath: direction) ifFalse: [^false].
@@ -116,9 +137,8 @@ Object subclass: RoomFactory [
             hint: #('You can interact with the locker, go north or go east, inspect the keypad next to security doors to find out more.').
 
         r getItems add: ItemFactory lockerRoomKey.
-        " r getInteractables add: ItemFactory locker. "
-        " r getInteractables add: ItemFactory compartment. "
-        r getItems add: ItemFactory coat.
+        r getInteractables add: ItemFactory locker.
+        r getInteractables add: ItemFactory compartment.
         ^r
     ]
 

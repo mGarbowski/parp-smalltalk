@@ -112,6 +112,11 @@ Object subclass: GameController [
                 self handleLook.
                 isUnknown := false
             ].
+            
+            (cmd startsWith: 'inspect ') ifTrue: [
+                isUnknown := false.
+                self handleInspect: cmd
+            ].
 
             (cmd startsWith: 'hint ') ifTrue: [
                 isUnknown := false.
@@ -242,6 +247,26 @@ Object subclass: GameController [
                 Transcript show: 'Ok'; cr
             ]
     ]
+
+    handleInspect: cmd [
+        |itemName validItem roomInspectables|
+        validItem := false.
+        itemName := cmd copyFrom: 9.
+        roomInspectables := self getGame getCurrentRoom getInspectables.
+
+        roomInspectables do: [ :i|
+            (itemName = i getName) ifTrue: [
+                self printLines: i getDescription.
+                validItem := true.
+                ].
+        ].
+
+        validItem ifFalse: [
+            Transcript show: 'I don''t see that here.'; nl.
+        ].
+        ^nil.
+    ]
+
 
     handleInventory [
         self printLines: self getGame listInventory
