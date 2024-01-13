@@ -1,47 +1,49 @@
-Object subclass: ItemFactory [
-    ItemFactory class >> lockerRoomKey [
+
+"Factory class for creating Interactables and its subclasses"
+Object subclass: InteractableFactory [
+    InteractableFactory class >> lockerRoomKey [
         ^Item
             name: 'heavy key'
             description: #('heavy metal key, what does it open?')
             hint: #('use it to open the locked door')
     ]
 
-    ItemFactory class >> coat [
+    InteractableFactory class >> coat [
         ^Item
             name: 'coat'
             description: #('The lab coat stirs a sense of familiarity. The nametag reads: "Dr. J. Sysy.", it triggers a cascade of hazy memories. As you run your fingers over the fabric, flashes of experiments and research echo in your mind. Memories start coming back to you, it is your coat!')
             hint: #('Take a good look at it, maybe you will find something useful')
     ]
 
-    ItemFactory class >> crowbar [
+    InteractableFactory class >> crowbar [
         ^Item
             name: 'crowbar'
             description: #('A heavy, metal crowbar painted red, the best tool for brute-force solutions')
             hint: #('Use it to pry open the ventilation shaft')
     ]
 
-    ItemFactory class >> powerCell [
+    InteractableFactory class >> powerCell [
         ^Item
             name: 'power cell'
             description: #('The power cell pulses with energy, illuminating the room. It may come in handy.')
             hint: #('It is a portable source of power')
     ]
 
-    ItemFactory class >> labShoes [
+    InteractableFactory class >> labShoes [
         ^Item
             name: 'lab shoes'
             description: #('A sturdy pair of shoes, essential for work in hazardous environments, around chemicals. You can put them on.')
             hint: #('Use `put on` to put on the shoes')
     ]
 
-    ItemFactory class >> smallKey [
+    InteractableFactory class >> smallKey [
         ^Item
             name: 'small key'
             description: #('A small key, does not match the size of the keyholes in any of the doors you have seen so far. It must open something smaller like a...')
             hint: #('Use it to unlock the locker compartment')
     ]
     
-    ItemFactory class >> locker [
+    InteractableFactory class >> locker [
         |lockerItems|
         lockerItems := {self coat}.
         ^ Container
@@ -53,7 +55,7 @@ Object subclass: ItemFactory [
             openedBy: nil
     ]
 
-    ItemFactory class >> toolChest [
+    InteractableFactory class >> toolChest [
         |toolChestItems|
         toolChestItems := {self powerCell. self crowbar}.
         ^ Container
@@ -65,7 +67,7 @@ Object subclass: ItemFactory [
             openedBy: nil. "todo: maybe just put lab shoes here?"
     ]
 
-    ItemFactory class >> compartment [
+    InteractableFactory class >> compartment [
         |compartmentItems|
         compartmentItems := {self labShoes}.
         ^ Container
@@ -77,7 +79,7 @@ Object subclass: ItemFactory [
             openedBy: self smallKey.
     ]
 
-        ItemFactory class >> controlPanel [
+        InteractableFactory class >> controlPanel [
         ^ Interactable
             name: 'control panel'
             description: #('The central console stands prominently, adorned with an array of power control'
@@ -90,14 +92,14 @@ Object subclass: ItemFactory [
             hint: #('You can use it to `power on` something')
     ]
 
-    ItemFactory class >> ventEntrance [
+    InteractableFactory class >> ventEntrance [
         ^ Interactable
             name: 'vent'
             description: #('A big, rectangular ventilation shaft large enough for a human to crawl inside')
             hint: #('You can `enter` the vent')
     ]
 
-    ItemFactory class >> computer [
+    InteractableFactory class >> computer [
         ^ Interactable
             name: 'computer'
             description: #('On the desk, a computer sits dormant. Its screen is powered off, casting a'
@@ -106,7 +108,7 @@ Object subclass: ItemFactory [
             hint: #('You can use it as a decorative piece or `power on computer`. to make better use of it.')
     ]
 
-    ItemFactory class >> generator [
+    InteractableFactory class >> generator [
         ^ Interactable
             name: 'generator'
             description: #('The emergency power generator looms with a single glowing cell within, flanked by two conspicuous empty slots,'
@@ -115,14 +117,14 @@ Object subclass: ItemFactory [
             hint: #('Use `power on generator` to power it on')
     ]
 
-    ItemFactory class >> brokenDoor [
+    InteractableFactory class >> brokenDoor [
         ^ Interactable
             name: 'broken door'
             description: #('A massive door, ripped out of its hinges is laying on the floor next to the entrance it used to guard.')
             hint: #('Maybe taking a closer look at it will reveal something?')
     ]
 
-    ItemFactory class >> elevator [
+    InteractableFactory class >> elevator [
         ^ Interactable
             name: 'elevator'
             description: #('Approaching the elevator, you find it disabled, a security override in effect.'
@@ -132,7 +134,7 @@ Object subclass: ItemFactory [
             hint: #('To go inside use `enter elevator`')
     ]
 
-    ItemFactory class >> desk [
+    InteractableFactory class >> desk [
         ^ Interactable
             name: 'desk'
             description: #('The desk in the room is simple yet functional. It holds a powered-off computer'
@@ -143,7 +145,7 @@ Object subclass: ItemFactory [
             hint: #('just google it')
     ]
 
-    ItemFactory class >> keypad [
+    InteractableFactory class >> keypad [
         ^ Interactable
             name: 'keypad'
             description: #('A modern keypad, mounted beside the security room door, stands as the gateway to the lab.'

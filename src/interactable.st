@@ -1,35 +1,14 @@
-Object subclass: Interactable [
-    | name description hint |
 
-    Interactable class >> new [
-        ^super new.
-    ]
+"The base type for items and containers, even though it does not extend the GameObject, it is 
+conceptually a different entity."
+GameObject subclass: Interactable []
 
-    Interactable class >> name: aName description: aDescription hint: aHint [
-        |i|
-        i := super new.
-        i setName: aName.
-        i setDescription: aDescription.
-        i setHint: aHint.
-        ^i
-    ]
+"Interactables that can be picked up by the player"
+Interactable subclass: Item []
 
-    getDescription [^ description]
-    setDescription: value [description := value]
 
-    getName [^ name]
-    setName: value [name := value]
-
-    getHint [^ hint]
-    setHint: aHint [hint := aHint]
-]
-
-Interactable subclass: Item [
-    "Interactables that can be picked up by the player"
-]
-
+"Interactables that can contain items and support unlocking using certain items/after meeting certain conditions"
 Interactable subclass: Container [
-    "Interactables that can contain items"
     | itemsInside isLocked openedBy |
     Container class >> name: aName description: aDescription hint: aHint itemsInside: someItems locked: isLocked openedBy: aKey [
         |c itemCollection|

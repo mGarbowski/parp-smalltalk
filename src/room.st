@@ -1,4 +1,4 @@
-Interactable subclass: Room [
+GameObject subclass: Room [
     | name description hint items interactables directions |
 
     Room class >> new [
@@ -134,9 +134,9 @@ Object subclass: RoomFactory [
             )
             hint: #('You can interact with the locker, go north or go east, inspect the keypad next to security doors to find out more.').
 
-        r getItems add: ItemFactory lockerRoomKey.
-        r getInteractables add: ItemFactory locker.
-        r getInteractables add: ItemFactory compartment.
+        r getItems add: InteractableFactory lockerRoomKey.
+        r getInteractables add: InteractableFactory locker.
+        r getInteractables add: InteractableFactory compartment.
         ^r
     ]
 
@@ -152,7 +152,7 @@ Object subclass: RoomFactory [
                 'suggesting a pivotal role in the functionality of the facility.'
             )
             hint: #('You can interact with the control panel or go south').
-        r getInteractables add: ItemFactory keypad.
+        r getInteractables add: InteractableFactory keypad.
         ^r
     ]
 
@@ -195,8 +195,8 @@ Object subclass: RoomFactory [
                 'though vibrating with a faint breeze, seems large enough for someone to fit through.'
             )
             hint: #('You can interact with generator, vent or go south').
-        r getInteractables add: ItemFactory generator.
-        r getInteractables add: ItemFactory ventEntrance.
+        r getInteractables add: InteractableFactory generator.
+        r getInteractables add: InteractableFactory ventEntrance.
         ^r
     ]
 
@@ -209,9 +209,9 @@ Object subclass: RoomFactory [
                 'Finally, a way out of this maze!'
             )
             hint: #('You can interact with vent and elevator').
-        r getInteractables add: ItemFactory elevator.
-        r getItems add: ItemFactory powerCell.
-        r getInteractables add: ItemFactory elevator.
+        r getInteractables add: InteractableFactory elevator.
+        r getItems add: InteractableFactory powerCell.
+        r getInteractables add: InteractableFactory elevator.
         ^r
     ]
 
@@ -227,8 +227,8 @@ Object subclass: RoomFactory [
                 'The broken door is laying next to where you stand.'
             )
             hint: #('You need to acquire some protective gear to walk through the toxic sludge.').
-        r getInteractables add: ItemFactory toolChest.
-        r getInteractables add: ItemFactory brokenDoor.
+        r getInteractables add: InteractableFactory toolChest.
+        r getInteractables add: InteractableFactory brokenDoor.
         ^r
     ]
 
@@ -244,9 +244,9 @@ Object subclass: RoomFactory [
                 'To the west there is a door locked from this side.'
             )
             hint: #('You can interact with: computer, desk, vent or try the door to the west').
-        r getInteractables add: ItemFactory computer.
-        r getInteractables add: ItemFactory ventEntrance.
-        r getInteractables add: ItemFactory desk.
+        r getInteractables add: InteractableFactory computer.
+        r getInteractables add: InteractableFactory ventEntrance.
+        r getInteractables add: InteractableFactory desk.
         ^r
     ]
 
@@ -280,7 +280,7 @@ Object subclass: RoomFactory [
         p := Path new.
         p setToRoom: rooms getCorridorOne.
         p setIsLocked: true.
-        p setOpenedBy: ItemFactory lockerRoomKey.
+        p setOpenedBy: InteractableFactory lockerRoomKey.
         rooms getLockerRoom getDirections at: 'east' put: p.
 
         p := Path new.
