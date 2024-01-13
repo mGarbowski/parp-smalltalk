@@ -8,10 +8,11 @@ Object subclass: Computer [
             input := FileStream stdin nextLine.
             (input isEmpty) ifTrue: [ ^ self ]. "Exit conditions"
 
-            (input = 'exit' | input = 'quit' | input = 'shutdown') ifTrue: [
+            (input = 'exit' or: [input = 'quit' or: [input = 'shutdown']]) ifTrue: [
                 Transcript show: 'Shutting down...'; nl.
                 ^ self.
             ].
+
             self processCommandInput: input.
         ].
     ]
@@ -90,3 +91,5 @@ Object subclass: Computer [
         ]
     ]
 ]
+
+Computer runComputer.
