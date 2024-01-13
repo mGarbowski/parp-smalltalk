@@ -217,22 +217,31 @@ Object subclass: GameController [
     ]
 
     handleTake: cmd [
-        |itemName roomItems item|
+        |itemName roomItems taken containerItem|
         itemName := cmd copyFrom: 6 to: cmd size.
         roomItems := self getGame getCurrentRoom getItems.
-        item := nil.
+        taken := false.
+        containerItem := nil.
 
-        roomItems do: [:i |
-            i getName = itemName ifTrue: [item := i]
-        ].
-
-        item = nil
-            ifTrue: [Transcript show: 'I dont see that here...'; cr]
-            ifFalse: [
+        roomItems do: [:item |
+            item getName = itemName ifTrue: [
+                taken := true.
                 self getGame addItem: item.
                 self getGame getCurrentRoom removeItem: item.
-                Transcript show: 'Ok'; cr
-            ]
+                ]
+        ].
+
+        "iterate through containers and remove if found"
+        self getGame getCurrentRoom getContainers do: [:c|
+            containerItem := c findItem: itemName.
+            (containerItem = nil) ifFalse: [
+                taken := true.
+                self getGame addItem: containerItem.
+                c removeItem: containerItem.
+                ].
+            ].
+
+        taken ifTrue: [Transcript show: 'Ok'; cr] ifFalse: [Transcript show: 'I don''t see that here'; cr]
     ]
 
     handleInspect: cmd [

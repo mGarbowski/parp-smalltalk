@@ -32,20 +32,19 @@ Interactable subclass: Container [
     "Interactables that can contain items"
     | itemsInside |
     Container class >> name: aName description: aDescription hint: aHint itemsInside: someItems [
-        |c|
+        |c itemCollection|
         c := super name: aName description: aDescription hint: aHint.
-        c setItems: someItems.
+        "constructor uses arrays because they're simpler to initalize, we need a collection"
+        itemCollection := OrderedCollection new.
+        itemCollection addAll: someItems.
+        c setItems: itemCollection.
         ^c
     ]
 
     getItems [^ itemsInside]
     setItems: someItems [itemsInside := someItems]
     
-    removeItem: itemName [
-        |i|
-        i := self findItem: itemName.
-        itemsInside identityRemove: item.
-    ]
+    removeItem: i [itemsInside identityRemove: i]
 
     findItem: itemName [
         |i|
@@ -59,6 +58,6 @@ Interactable subclass: Container [
     ]
 
     containsItem: itemName [
-        ^(self findItem: itemName != nil).
+        ^(self findItem: itemName /= nil).
     ]
 ]
