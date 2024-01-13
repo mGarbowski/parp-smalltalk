@@ -91,5 +91,3 @@ Object subclass: Computer [
         ]
     ]
 ]
-
-Computer runComputer.
