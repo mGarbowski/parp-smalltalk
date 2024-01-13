@@ -42,27 +42,33 @@ Object subclass: ItemFactory [
     ]
     
     ItemFactory class >> locker [
+        |lockerItems|
+        lockerItems := {self coat}.
         ^ Container
             name: 'locker'
             description: 'A locker for storing personal items. The locker reveals two compartments, in the upper part, a lab coat hangs neatly on a hanger. Below there is another compartment.'
             hint: 'Look what is inside'
-            itemsInside: #(self coat).
+            itemsInside: lockerItems.
     ]
 
     ItemFactory class >> toolChest [
+        |toolChestItems|
+        toolChestItems := {self toolChest, self crowbar}.
         ^ Container
             name: 'tool chest'
             description: 'Inside there is a crowbar and a power cell'
             hint: 'Wearing the shoes, you can cross the toxic puddle and reach into the tool chest'
-            itemsInside: #(self powerCell, self crowbar).
+            itemsInside: toolChestItems.
     ]
 
     ItemFactory class >> compartment [
+        |compartmentItems|
+        compartmentItems := {self labShoes}.
         ^ Container
             name: 'compartment'
             description: 'In the smaller compartment is pair of sturdy, lab shoes. These could probably come in handy!'
             hint: 'Perhaps you can use the contents of the compartment later?'
-            itemsInside: #(self labShoes).
+            itemsInside: compartmentItems.
     ]
 
         ItemFactory class >> controlPanel [
