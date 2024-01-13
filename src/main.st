@@ -151,19 +151,6 @@ Object subclass: GameController [
         ]
     ]
 
-    test [
-        |rooms tmp|
-        rooms := RoomFactory rooms.
-
-        rooms do: [ :room |
-            Transcript show: room getName; cr.
-            room getDirections at: 'east' ifPresent: [ :path |
-                Transcript show: 'is connected to the east with '.
-                Transcript show: path getToRoom getName; cr; cr.
-            ]
-        ]
-
-    ]
 
     handleLook [
         self printLines: self getGame getCurrentRoom getDescription
@@ -252,7 +239,7 @@ Object subclass: GameController [
         |itemName validItem roomInspectables|
         validItem := false.
         itemName := cmd copyFrom: 9.
-        roomInspectables := self getGame getCurrentRoom getInspectables.
+        roomInspectables := self getGame getCurrentRoom getAllInteractables.
 
         roomInspectables do: [ :i|
             (itemName = i getName) ifTrue: [

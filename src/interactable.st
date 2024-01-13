@@ -42,10 +42,23 @@ Interactable subclass: Container [
     setItems: someItems [itemsInside := someItems]
     
     removeItem: itemName [
-        itemsInside do: [ :item |
-            (item getName = itemName) ifTrue: [
-                itemsInside identityRemove: item.
-            ]
-        ]
+        |i|
+        i := self findItem: itemName.
+        itemsInside identityRemove: item.
+    ]
+
+    findItem: itemName [
+        |i|
+        i := nil.
+        itemsInside do: [:item |
+        (item getName = itemName) ifTrue: [
+            i := item.
+            ].
+        ].
+        ^i.
+    ]
+
+    containsItem: itemName [
+        ^(self findItem: itemName != nil).
     ]
 ]

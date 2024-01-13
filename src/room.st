@@ -36,26 +36,23 @@ Interactable subclass: Room [
         ^(directions includesKey: direction)
     ]
 
+    getContainers [
+        |containers|
+        containers := OrderedCollection new.
+        self getInteractables do: [:i | 
+            (i isMemberOf: Container) ifTrue: [containers add: i].
+       ]. 
+       ^containers.
+    ]
+
     getContainerItems [
         |containerItems|
         containerItems := OrderedCollection new.
-        (self getInteractables) do: [ :i | 
-            (i isMemberOf: Container) ifTrue: [
-                containerItems addAll: (i getItems).
-            ].
+        (self getContainers) do: [ :c | 
+            containerItems addAll: (c getItems).
         ].
         ^containerItems.
     ]
-
-    getInspectables [
-        |inspectables|
-        inspectables := OrderedCollection new.
-        inspectables addAll: self getInteractables.
-        inspectables addAll: self getItems.
-        inspectables addAll: self getContainerItems.
-        ^inspectables.
-    ]
-
 
     canGoInDirection: direction [
         |path|
@@ -77,6 +74,7 @@ Interactable subclass: Room [
         all := OrderedCollection new.
         all addAll: self getItems.
         all addAll: self getInteractables.
+        all addAll: self getContainerItems.
         ^all
     ]
 
