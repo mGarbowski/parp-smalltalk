@@ -52,8 +52,8 @@ Object subclass: ItemFactory [
     ]
 
     ItemFactory class >> toolChest [
-        |toolChestItems|
-        toolChestItems := {self toolChest, self crowbar}.
+        |toolChestItems pc cb|
+        toolChestItems := {self powerCell. self crowbar}.
         ^ Container
             name: 'tool chest'
             description: 'Inside there is a crowbar and a power cell'
