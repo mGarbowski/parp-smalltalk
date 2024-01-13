@@ -112,6 +112,11 @@ Object subclass: GameController [
                 self handleLook.
                 isUnknown := false
             ].
+            
+            (cmd startsWith: 'inspect ') ifTrue: [
+                isUnknown := false.
+                self handleInspect: cmd
+            ].
 
             (cmd startsWith: 'hint ') ifTrue: [
                 isUnknown := false.
@@ -146,19 +151,6 @@ Object subclass: GameController [
         ]
     ]
 
-    test [
-        |rooms tmp|
-        rooms := RoomFactory rooms.
-
-        rooms do: [ :room |
-            Transcript show: room getName; cr.
-            room getDirections at: 'east' ifPresent: [ :path |
-                Transcript show: 'is connected to the east with '.
-                Transcript show: path getToRoom getName; cr; cr.
-            ]
-        ]
-
-    ]
 
     handleLook [
         self printLines: self getGame getCurrentRoom getDescription
@@ -225,23 +217,52 @@ Object subclass: GameController [
     ]
 
     handleTake: cmd [
-        |itemName roomItems item|
+        |itemName roomItems taken containerItem|
         itemName := cmd copyFrom: 6 to: cmd size.
         roomItems := self getGame getCurrentRoom getItems.
-        item := nil.
+        taken := false.
+        containerItem := nil.
 
-        roomItems do: [:i |
-            i getName = itemName ifTrue: [item := i]
-        ].
-
-        item = nil
-            ifTrue: [Transcript show: 'I dont see that here...'; cr]
-            ifFalse: [
+        roomItems do: [:item |
+            item getName = itemName ifTrue: [
+                taken := true.
                 self getGame addItem: item.
                 self getGame getCurrentRoom removeItem: item.
-                Transcript show: 'Ok'; cr
-            ]
+                ]
+        ].
+
+        "iterate through containers and remove if found"
+        self getGame getCurrentRoom getContainers do: [:c|
+            containerItem := c findItem: itemName.
+            (containerItem = nil) ifFalse: [
+                taken := true.
+                self getGame addItem: containerItem.
+                c removeItem: containerItem.
+                ].
+            ].
+
+        taken ifTrue: [Transcript show: 'Ok'; cr] ifFalse: [Transcript show: 'I don''t see that here'; cr]
     ]
+
+    handleInspect: cmd [
+        |itemName validItem roomInspectables|
+        validItem := false.
+        itemName := cmd copyFrom: 9.
+        roomInspectables := self getGame getCurrentRoom getAllInteractables.
+
+        roomInspectables do: [ :i|
+            (itemName = i getName) ifTrue: [
+                self printLines: i getDescription.
+                validItem := true.
+                ].
+        ].
+
+        validItem ifFalse: [
+            Transcript show: 'I don''t see that here.'; nl.
+        ].
+        ^nil.
+    ]
+
 
     handleInventory [
         self printLines: self getGame listInventory

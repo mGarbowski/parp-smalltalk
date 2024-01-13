@@ -1,4 +1,4 @@
-Interactable subclass: Room [
+GameObject subclass: Room [
     | name description hint items interactables directions |
 
     Room class >> new [
@@ -36,6 +36,24 @@ Interactable subclass: Room [
         ^(directions includesKey: direction)
     ]
 
+    getContainers [
+        |containers|
+        containers := OrderedCollection new.
+        self getInteractables do: [:i | 
+            (i isMemberOf: Container) ifTrue: [containers add: i].
+       ]. 
+       ^containers.
+    ]
+
+    getContainerItems [
+        |containerItems|
+        containerItems := OrderedCollection new.
+        (self getContainers) do: [ :c | 
+            containerItems addAll: (c getItems).
+        ].
+        ^containerItems.
+    ]
+
     canGoInDirection: direction [
         |path|
         (self hasPath: direction) ifFalse: [^false].
@@ -56,6 +74,7 @@ Interactable subclass: Room [
         all := OrderedCollection new.
         all addAll: self getItems.
         all addAll: self getInteractables.
+        all addAll: self getContainerItems.
         ^all
     ]
 
@@ -102,7 +121,7 @@ Object subclass: RoomFactory [
     "Factory methods for creating rooms populated with items and interactables"
 
     RoomFactory class >> lockerRoom [
-        |r lrk|
+        |r|
         r := Room
             name: 'locker room'
             description: #(
@@ -114,8 +133,10 @@ Object subclass: RoomFactory [
                  'To the east, you see another door with no labels as to where it leads'
             )
             hint: #('You can interact with the locker, go north or go east, inspect the keypad next to security doors to find out more.').
-        lrk := ItemFactory lockerRoomKey.
-        r getItems add: lrk.
+
+        r getItems add: InteractableFactory lockerRoomKey.
+        r getInteractables add: InteractableFactory locker.
+        r getInteractables add: InteractableFactory compartment.
         ^r
     ]
 
@@ -131,6 +152,7 @@ Object subclass: RoomFactory [
                 'suggesting a pivotal role in the functionality of the facility.'
             )
             hint: #('You can interact with the control panel or go south').
+        r getInteractables add: InteractableFactory keypad.
         ^r
     ]
 
@@ -173,6 +195,8 @@ Object subclass: RoomFactory [
                 'though vibrating with a faint breeze, seems large enough for someone to fit through.'
             )
             hint: #('You can interact with generator, vent or go south').
+        r getInteractables add: InteractableFactory generator.
+        r getInteractables add: InteractableFactory ventEntrance.
         ^r
     ]
 
@@ -185,6 +209,9 @@ Object subclass: RoomFactory [
                 'Finally, a way out of this maze!'
             )
             hint: #('You can interact with vent and elevator').
+        r getInteractables add: InteractableFactory elevator.
+        r getItems add: InteractableFactory powerCell.
+        r getInteractables add: InteractableFactory elevator.
         ^r
     ]
 
@@ -200,6 +227,8 @@ Object subclass: RoomFactory [
                 'The broken door is laying next to where you stand.'
             )
             hint: #('You need to acquire some protective gear to walk through the toxic sludge.').
+        r getInteractables add: InteractableFactory toolChest.
+        r getInteractables add: InteractableFactory brokenDoor.
         ^r
     ]
 
@@ -215,6 +244,9 @@ Object subclass: RoomFactory [
                 'To the west there is a door locked from this side.'
             )
             hint: #('You can interact with: computer, desk, vent or try the door to the west').
+        r getInteractables add: InteractableFactory computer.
+        r getInteractables add: InteractableFactory ventEntrance.
+        r getInteractables add: InteractableFactory desk.
         ^r
     ]
 
@@ -248,7 +280,7 @@ Object subclass: RoomFactory [
         p := Path new.
         p setToRoom: rooms getCorridorOne.
         p setIsLocked: true.
-        p setOpenedBy: ItemFactory lockerRoomKey.
+        p setOpenedBy: InteractableFactory lockerRoomKey.
         rooms getLockerRoom getDirections at: 'east' put: p.
 
         p := Path new.
