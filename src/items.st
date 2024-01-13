@@ -1,5 +1,5 @@
 
-"Factory class for creating Interactables and its subclasses"
+"Factory class for creating Interactables and its sub"
 Object subclass: InteractableFactory [
     InteractableFactory class >> lockerRoomKey [
         ^Item
@@ -11,7 +11,10 @@ Object subclass: InteractableFactory [
     InteractableFactory class >> coat [
         ^Item
             name: 'coat'
-            description: #('The lab coat stirs a sense of familiarity. The nametag reads: "Dr. J. Sysy.", it triggers a cascade of hazy memories. As you run your fingers over the fabric, flashes of experiments and research echo in your mind. Memories start coming back to you, it is your coat!')
+            description: #('The lab coat stirs a sense of familiarity. The nametag reads: "Dr. J. Sysy.", it triggers a cascade of hazy memories.'
+                           'As you run your fingers over the fabric, flashes of experiments and research echo in your mind. Memories start coming back to you, it is your coat!'
+                           'Instinctively you check your pockets. You feel a small, cold object - a *heavy key*'
+                           )
             hint: #('Take a good look at it, maybe you will find something useful')
     ]
 
@@ -120,7 +123,10 @@ Object subclass: InteractableFactory [
     InteractableFactory class >> brokenDoor [
         ^ Interactable
             name: 'broken door'
-            description: #('A massive door, ripped out of its hinges is laying on the floor next to the entrance it used to guard.')
+            description: #('You inspect the door closely and decide to flip it over.'
+                'What a surprise! Somebody must''ve put a key into the keyhole.'
+                'The key is bent, but it is attached to a keychain, on which there is another key.'
+                'What could it unlock?')
             hint: #('Maybe taking a closer look at it will reveal something?')
     ]
 
