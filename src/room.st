@@ -102,7 +102,7 @@ Object subclass: RoomFactory [
     "Factory methods for creating rooms populated with items and interactables"
 
     RoomFactory class >> lockerRoom [
-        |r lrk|
+        |r|
         r := Room
             name: 'locker room'
             description: #(
@@ -114,8 +114,11 @@ Object subclass: RoomFactory [
                  'To the east, you see another door with no labels as to where it leads'
             )
             hint: #('You can interact with the locker, go north or go east, inspect the keypad next to security doors to find out more.').
-        lrk := ItemFactory lockerRoomKey.
-        r getItems add: lrk.
+
+        r getItems add: ItemFactory lockerRoomKey.
+        " r getInteractables add: ItemFactory locker. "
+        " r getInteractables add: ItemFactory compartment. "
+        r getItems add: ItemFactory coat.
         ^r
     ]
 
@@ -131,6 +134,7 @@ Object subclass: RoomFactory [
                 'suggesting a pivotal role in the functionality of the facility.'
             )
             hint: #('You can interact with the control panel or go south').
+        r getInteractables add: ItemFactory keypad.
         ^r
     ]
 
@@ -173,6 +177,8 @@ Object subclass: RoomFactory [
                 'though vibrating with a faint breeze, seems large enough for someone to fit through.'
             )
             hint: #('You can interact with generator, vent or go south').
+        r getInteractables add: ItemFactory generator.
+        r getInteractables add: ItemFactory ventEntrance.
         ^r
     ]
 
@@ -185,6 +191,9 @@ Object subclass: RoomFactory [
                 'Finally, a way out of this maze!'
             )
             hint: #('You can interact with vent and elevator').
+        r getInteractables add: ItemFactory elevator.
+        r getItems add: ItemFactory powerCell.
+        r getInteractables add: ItemFactory elevator.
         ^r
     ]
 
@@ -200,6 +209,8 @@ Object subclass: RoomFactory [
                 'The broken door is laying next to where you stand.'
             )
             hint: #('You need to acquire some protective gear to walk through the toxic sludge.').
+        r getInteractables add: ItemFactory toolChest.
+        r getInteractables add: ItemFactory brokenDoor.
         ^r
     ]
 
@@ -215,6 +226,9 @@ Object subclass: RoomFactory [
                 'To the west there is a door locked from this side.'
             )
             hint: #('You can interact with: computer, desk, vent or try the door to the west').
+        r getInteractables add: ItemFactory computer.
+        r getInteractables add: ItemFactory ventEntrance.
+        r getInteractables add: ItemFactory desk.
         ^r
     ]
 

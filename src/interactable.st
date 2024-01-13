@@ -34,7 +34,7 @@ Interactable subclass: Container [
     Container class >> name: aName description: aDescription hint: aHint itemsInside: someItems [
         |c|
         c := super name: aName description: aDescription hint: aHint.
-        c setItems someItems.
+        c setItems: someItems.
         ^c
     ]
 
