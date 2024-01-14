@@ -35,12 +35,6 @@ Object subclass: Game [
         g setCoatKeyTaken: false.
         g setBrokenDoorKeyTaken: false.
         g setLabShoesOn: false.
-        
-        "todo: delete"
-        g setCurrentRoom: g getAllRooms getGeneratorRoom.
-        g addItem: InteractableFactory powerCell.
-        g addItem: InteractableFactory powerCell.
-
         ^g
     ]
 
