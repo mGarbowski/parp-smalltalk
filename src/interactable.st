@@ -38,11 +38,6 @@ Interactable subclass: Container [
         ]
     setItems: someItems [itemsInside := someItems]
     
-    getDescription [
-        isLocked ifTrue: [^#('It is locked, perhaps you need some key?')]
-        ifFalse: [^description].
-    ]
-    
     "Content management"
     removeItem: i [itemsInside identityRemove: i]
 

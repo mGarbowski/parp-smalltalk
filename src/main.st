@@ -98,6 +98,7 @@ Object subclass: GameController [
 
             isUnknown := true.
             cmd := self readCommand.
+            self printLines: #('').
 
             cmd = 'instructions' ifTrue: [
                 self printInstructions.
@@ -151,6 +152,11 @@ Object subclass: GameController [
                 self handlePowerOn: cmd.
             ].
 
+            (cmd startsWith: 'put on') ifTrue: [
+                isUnknown := false.
+                self handlePutOn: cmd.
+            ].
+
             cmd = 'quit' ifTrue: [
                 isGameOver := true.
                 isUnknown := false
@@ -158,7 +164,7 @@ Object subclass: GameController [
                 
             isUnknown ifTrue: [
                 self printLines: #('Unknown command.' '')
-            ]
+            ].
         ]
     ]
 
@@ -538,6 +544,7 @@ Object subclass: GameController [
             compartment := g getCurrentRoom getItemByName: InteractableFactory compartment getName.
             (g inventoryContains: compartment getOpenedBy getName) ifTrue: [
                 compartment setIsLocked: false.
+                compartment setDescription: DescriptionFactory compartmentUnlocked.
                 Transcript show: 'Ok, unlocked.'; cr.
             ]
             ifFalse: [

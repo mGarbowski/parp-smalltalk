@@ -24,6 +24,9 @@ Object subclass: DescriptionFactory [
         ^#('As you''re crawling out of the ventilation shaft, you notice an elevator.'
             'Finally, a way out of this maze!')
     ]
+        DescriptionFactory class >> compartmentUnlocked [
+        ^#('In the smaller compartment is pair of sturdy, lab shoes. These could probably come in handy!')
+    ]
 ]
 
 

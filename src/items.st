@@ -70,7 +70,7 @@ Object subclass: InteractableFactory [
         compartmentItems := {self labShoes}.
         ^ Container
             name: 'compartment'
-            description: #('In the smaller compartment is pair of sturdy, lab shoes. These could probably come in handy!')
+            description: #('The compartment is locked. Maybe there is a key laying around somewhere?')
             hint: #('Perhaps you can use the contents of the compartment later?')
             itemsInside: compartmentItems
             locked: true
