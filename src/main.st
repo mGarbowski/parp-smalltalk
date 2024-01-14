@@ -165,10 +165,11 @@ Object subclass: GameController [
     ]
 
     handleHintHere [
-        |room|
+        |room items|
         room := self getGame getCurrentRoom.
         self printLines: room getHint.
-        self printLines: room listItems
+        items := room listItems.
+        (items size = 1) ifFalse: [self printLines: items].
     ]
 
     "todo also handle items in the inventory"
