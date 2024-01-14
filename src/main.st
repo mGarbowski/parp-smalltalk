@@ -356,7 +356,10 @@ Object subclass: GameController [
             g getInventory do: [ :ie|
                 (ie getItem getName = key getName) ifTrue: [
                     path setIsLocked: false.
-                    Transcript show: 'Ok, unlocked.'; cr.
+                    "Only show the message if not unlocking the vent since it has a custom one"
+                    (room getName = RoomFactory generatorRoom getName & query = 'east') ifFalse: [
+                        Transcript show: 'Ok, unlocked.'; cr.
+                        ].
                     ^nil
                 ]
             ].
