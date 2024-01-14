@@ -35,6 +35,12 @@ Object subclass: Game [
         g setCoatKeyTaken: false.
         g setBrokenDoorKeyTaken: false.
         g setLabShoesOn: false.
+        
+        "todo: delete"
+        g setCurrentRoom: g getAllRooms getGeneratorRoom.
+        g addItem: InteractableFactory powerCell.
+        g addItem: InteractableFactory powerCell.
+
         ^g
     ]
 
@@ -84,6 +90,12 @@ Object subclass: Game [
             ]
     ]
 
+    removeItem: itemName [
+        |entry|
+        entry := self getEntryOrNil: itemName.
+        inventory identityRemove: entry.
+    ]
+
     listInventory [
         |lines line|
         lines := OrderedCollection new.
@@ -93,7 +105,7 @@ Object subclass: Game [
             lines add: '- ', ie getItem getName, ' x', ie getCount printString
         ].
 
-        ^lines
+        (lines size = 1) ifFalse: [^lines] ifTrue: [^#('Your inventory is empty')].
     ]
 
     inventoryContains: itemName [
