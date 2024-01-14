@@ -1,0 +1,2 @@
+#/bin/sh
+gst ./src/gameobject.st ./src/interactable.st ./src/items.st ./src/path.st ./src/computer.st ./src/room.st ./src/descriptions.st ./src/game.st ./src/main.st

@@ -2,7 +2,21 @@
 * Mikołaj Garbowski
 * Maksym Bieńkowski
 
+Gra tekstowa w języku GNU Smalltalk.
+
+Zadanie projektowe na przedmiot Paradygmaty Programowania.
+
+## Instalacja
+Wymaga instalacja maszyny wirtualnej `gst` do uruchomienia.
+
+```shell
+sudo apt install gnu-smalltalk
+```
+
 ## Uruchomienie
 ```shell
-gst ./src/path.st ./src/game.st  ./src/interactable.st ./src/items.st ./src/room.st ./src/main.st
+./run
 ```
+
+## Diagram klas
+![class diagram](./docs/class-diagram.png)

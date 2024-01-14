@@ -265,7 +265,7 @@ Object subclass: RoomFactory [
         |r|
         r := Room
             name: 'ventilation shaft'
-            description: #('You are in the vent shaft. You can proceed east, south or north')
+            description: #('You are in the vent shaft. You can proceed east, south or west')
             hint: #('You can proceed east, south or west').
         ^r
     ]
