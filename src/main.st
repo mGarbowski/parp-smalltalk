@@ -138,7 +138,7 @@ Object subclass: GameController [
                 self handleUnlock: cmd
             ].
 
-            (cmd startsWith 'power on') ifTrue: [
+            (cmd startsWith: 'power on') ifTrue: [
                 isUnknown := false.
                 self handlePowerOn: cmd.
             ].
@@ -336,9 +336,51 @@ Object subclass: GameController [
     ]
 
     handlePowerOn: cmd [
-        |query|
+        |query cellCount|
         query := cmd copyFrom: 10.
-        (query = InteractableFactory generator getName) ifFalse: [Transcript show: 'Can''t power this on.'; cr. ^nil.]
+        
+        "not generator"
+        (query = InteractableFactory generator getName) ifFalse: [
+            Transcript show: 'Can''t power this on.'; cr.
+            ^nil.
+            ]
+        
+        "generator"
+        ifTrue: [self tryPowerOnGenerator. ^nil.].
+    ]
+
+    tryPowerOnGenerator [
+        |generator cellCount|
+        generator := self getGame getAllRooms getGeneratorRoom getItemByName: InteractableFactory generator getName.
+
+        "already on"
+        (self getGame getGeneratorOn) ifTrue: [
+            Transcript show: 'The air vibrates with renewed energy, and the machinery''s gentle rumble echoes through the entire lab.'; cr.
+            ^nil.
+        ].
+
+        "no power cells in equipment"
+        (self getGame inventoryContains: InteractableFactory powerCell getName) ifFalse: [
+            Transcript show: 'Power remains elusive without the necessary cells. Find and install them to awaken this dormant machine.'; cr.
+            ^nil.
+        ].
+
+        "there is a power cell entry, check how many cells"
+        cellCount := (self getGame getEntryOrNil: InteractableFactory powerCell getName) getCount.
+
+        "enough cells"
+        cellCount = 2 ifTrue: [
+            self printLines: #('With a satisfying click, you slot the power cells into place.'
+                    'The generator springs to life with a reassuring hum. Lights flicker on, flooding the room with a steady glow.'
+                    'The air vibrates with renewed energy, and the machinery''s gentle rumble signals success, powering up the entire lab.').
+            self getGame setGeneratorOn: true.
+            generator setDescription: DescriptionFactory generatorOn.
+        ]
+
+        "not enough cells"
+        ifFalse: [
+            Transcript show: 'Power remains elusive without the necessary cells. Find and install them to awaken this dormant machine.'; cr.
+        ]
     ]
 
     handleUnlock: cmd [

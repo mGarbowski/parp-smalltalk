@@ -7,10 +7,6 @@ Object subclass: DescriptionFactory [
          'Its doors slightly ajar, inviting you to step inside and make your way to freedom.'
         )
     ]
-        DescriptionFactory class >> generatorFull [
-        ^#('With the power cells in place, the generator hums to life, its core glowing vibrantly.'
-            'It''s ready to go—just a switch away from unleashing its energy.')
-    ]
         DescriptionFactory class >> generatorOn [
         ^#('The generator is fully functional, providing power for the entire laboratory.'
             'Perhaps powering it on has provided you with some new possibilities?')
