@@ -152,7 +152,7 @@ Object subclass: InteractableFactory [
             description: #('A modern keypad, mounted beside the security room door, stands as the gateway to the lab.'
                 'It features a digital touchscreen with a numeric grid and softly backlit keys.'
                 'To enter, you must input the correct 6-digit code.')
-            hint: #('Use `enter keypad <code>` to enter a code'
+            hint: #('Use `enter pin <code>` to enter a code'
                 'Only 6 digits? That''s only like 999 999 options, you can just brute force it...'
                 '...or look around for the code, it must be *somewhere*')
     ]

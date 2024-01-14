@@ -133,6 +133,11 @@ Object subclass: GameController [
                 self handleInventory
             ].
 
+            (cmd startsWith: 'enter pin ') ifTrue: [
+                isUnknown := false.
+                self handleEnterPin: cmd
+            ].
+
             (cmd startsWith: 'unlock ') ifTrue: [
                 isUnknown := false.
                 self handleUnlock: cmd
@@ -420,7 +425,25 @@ Object subclass: GameController [
         ].
     ]
 
-    
+    handleEnterPin: cmd [
+        |pin path|
+        
+        "wrong room"
+        (self getGame getCurrentRoom getName = RoomFactory lockerRoom getName) ifFalse: [
+            Transcript show: 'Where?'; cr.
+            ^nil.
+            ].
+
+        "right room"
+        pin := cmd copyFrom: 11.
+        (pin = '852611') ifTrue: [
+            Transcript show: 'The light on the lock blinks green, it buzzes and unlocks. Correct!'; cr.
+            path := self getGame getAllRooms getLockerRoom getDirections at: 'north'.
+            path setIsLocked: false.
+        ] ifFalse: [
+            Transcript show: 'The light on the lock blinks red. The provided code was incorrect.'; cr.
+                ].
+    ]
 
 
     handleUnlock: cmd [
