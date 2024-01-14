@@ -6,6 +6,8 @@ Gra tekstowa w języku GNU Smalltalk.
 
 Zadanie projektowe na przedmiot Paradygmaty Programowania.
 
+[Przykładowa rozgrywka](./docs/playthrough.txt)
+
 ## Instalacja
 Wymaga instalacja maszyny wirtualnej `gst` do uruchomienia.
 
