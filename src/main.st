@@ -188,7 +188,7 @@ Object subclass: GameController [
         ].
 
         found
-            ifTrue: [Transcript show: obj getHint; cr]
+            ifTrue: [self printLines: obj getHint]
             ifFalse: [Transcript show: 'I dont see that here...'; cr]
     ]
 
@@ -249,6 +249,11 @@ Object subclass: GameController [
                 c removeItem: containerItem.
                 ].
             ].
+
+        (self getGame getCurrentRoom getName = RoomFactory exitRoom getName & itemName = InteractableFactory powerCell getName) ifTrue: [
+            "don''t inform the player there is a power cell on the floor if he took"
+            self getGame getAllRooms getExitRoom setDescription: DescriptionFactory exitRoomNoPowerCell.
+        ].
 
         taken ifTrue: [Transcript show: 'Ok'; cr] ifFalse: [Transcript show: 'I don''t see that here'; cr]
     ]
@@ -505,6 +510,7 @@ Object subclass: GameController [
                     self printLines: #('You slide the crowbar between the vent door and its door frame'
                                 'and push with a lot of force. The vent swings open!').
                     g setVentBlocked: false.
+                    self changeVentHints.
                     self handleUnlock: 'unlock east'.
                 ] ifFalse: [
                     self printLines: #('The vent is closed shut and the door doesn''t seem to budge.'
@@ -515,6 +521,17 @@ Object subclass: GameController [
 
 
         validQuery ifFalse: [Transcript show: 'I don''t see that here'; cr].
+    ]
+
+    changeVentHints [
+        "called after the vents are unlocked using the crowbar"
+        |newHint rooms grVent crVent|
+        newHint := HintFactory ventUnlocked.
+        rooms := self getGame getAllRooms.
+        grVent := rooms getGeneratorRoom getItemByName: (InteractableFactory ventEntrance getName).
+        crVent := rooms getComputerRoom getItemByName: (InteractableFactory ventEntrance getName).
+        grVent setHint: newHint.
+        crVent setHint: newHint.
     ]
 ]
 

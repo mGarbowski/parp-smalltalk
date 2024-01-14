@@ -20,6 +20,10 @@ Object subclass: DescriptionFactory [
         DescriptionFactory class >> toolChestWearingShoes [
         ^#('Inside there is a crowbar and a power cell. These could come in handy!')
     ]
+        DescriptionFactory class >> exitRoomNoPowerCell [
+        ^#('As you''re crawling out of the ventilation shaft, you notice an elevator.'
+            'Finally, a way out of this maze!')
+    ]
 ]
 
 
