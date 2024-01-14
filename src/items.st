@@ -1,5 +1,5 @@
 
-"Factory class for creating Interactables and its subclasses"
+"Factory class for creating Interactables and its sub"
 Object subclass: InteractableFactory [
     InteractableFactory class >> lockerRoomKey [
         ^Item
@@ -9,9 +9,12 @@ Object subclass: InteractableFactory [
     ]
 
     InteractableFactory class >> coat [
-        ^Item
+        ^Interactable
             name: 'coat'
-            description: #('The lab coat stirs a sense of familiarity. The nametag reads: "Dr. J. Sysy.", it triggers a cascade of hazy memories. As you run your fingers over the fabric, flashes of experiments and research echo in your mind. Memories start coming back to you, it is your coat!')
+            description: #('The lab coat stirs a sense of familiarity. The nametag reads: "Dr. J. Sysy.", it triggers a cascade of hazy memories.'
+                           'As you run your fingers over the fabric, flashes of experiments and research echo in your mind. Memories start coming back to you, it is your coat!'
+                           'Instinctively you check your pockets. You feel a small, cold object - a *heavy key*. You decide to take it. It might prove useful.'
+                           )
             hint: #('Take a good look at it, maybe you will find something useful')
     ]
 
@@ -44,15 +47,10 @@ Object subclass: InteractableFactory [
     ]
     
     InteractableFactory class >> locker [
-        |lockerItems|
-        lockerItems := {self coat}.
-        ^ Container
+        ^ Interactable 
             name: 'locker'
             description: #('A locker for storing personal items. The locker reveals two compartments, in the upper part, a lab coat hangs neatly on a hanger. Below there is another compartment.')
             hint: 'Look what is inside'
-            itemsInside: lockerItems
-            locked: false
-            openedBy: nil
     ]
 
     InteractableFactory class >> toolChest [
@@ -60,11 +58,11 @@ Object subclass: InteractableFactory [
         toolChestItems := {self powerCell. self crowbar}.
         ^ Container
             name: 'tool chest'
-            description: #('Inside there is a crowbar and a power cell')
-            hint: #('Wearing the shoes, you can cross the toxic puddle and reach into the tool chest')
+            description: #('Red, metallic tool chest lies across the room. If only you had some protective gear to cross the sludge...')
+            hint: #('Maybe if you wore some protective gear, you could cross the toxic puddle and reach into the tool chest?')
             itemsInside: toolChestItems
-            locked: false
-            openedBy: nil. "todo: maybe just put lab shoes here?"
+            locked: true
+            openedBy: nil.
     ]
 
     InteractableFactory class >> compartment [
@@ -96,7 +94,7 @@ Object subclass: InteractableFactory [
         ^ Interactable
             name: 'vent'
             description: #('A big, rectangular ventilation shaft large enough for a human to crawl inside')
-            hint: #('You can `enter` the vent')
+            hint: #('If only you had something to open the vent with...')
     ]
 
     InteractableFactory class >> computer [
@@ -120,7 +118,10 @@ Object subclass: InteractableFactory [
     InteractableFactory class >> brokenDoor [
         ^ Interactable
             name: 'broken door'
-            description: #('A massive door, ripped out of its hinges is laying on the floor next to the entrance it used to guard.')
+            description: #('You inspect the door closely and decide to flip it over.'
+                'What a surprise! Somebody must''ve put a key into the keyhole.'
+                'The key is bent, but it is attached to a keychain, on which there is another key.'
+                'What could it unlock?')
             hint: #('Maybe taking a closer look at it will reveal something?')
     ]
 
