@@ -21,7 +21,7 @@ Object subclass: InventoryEntry [
 
 "Game class storing the game's state"
 Object subclass: Game [
-    |currentRoom allRooms inventory|
+    |currentRoom allRooms inventory generatorOn elevatorOn ventBlocked|
 
     Game class >> new [
         |g|
@@ -29,6 +29,9 @@ Object subclass: Game [
         g setAllRooms: RoomFactory getRooms.
         g setCurrentRoom: g getAllRooms getLockerRoom.
         g setInventory: OrderedCollection new.
+        g setGeneratorOn: false.
+        g setElevatorOn: false.
+        g setVentBlocked: true.
         ^g
     ]
 
@@ -40,6 +43,15 @@ Object subclass: Game [
 
     getInventory [^inventory]
     setInventory: inv [inventory := inv]
+
+    getGeneratorOn [^generatorOn]
+    setGeneratorOn: bool [generatorOn := bool]
+    
+    getElevatorOn [^elevatorOn]
+    setElevatorOn: bool [elevatorOn := bool]
+
+    getVentBlocked [^ventBlocked]
+    setVentBlocked: bool [ventBlocked := bool]
 
     addItem: item [
         |invEntry count|

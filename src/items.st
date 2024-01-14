@@ -99,7 +99,7 @@ Object subclass: InteractableFactory [
         ^ Interactable
             name: 'vent'
             description: #('A big, rectangular ventilation shaft large enough for a human to crawl inside')
-            hint: #('You can `enter` the vent')
+            hint: #('If only you had something to open the vent with...')
     ]
 
     InteractableFactory class >> computer [
