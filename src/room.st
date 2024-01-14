@@ -386,7 +386,7 @@ Factory subclass: RoomFactory [
         p := Path new.
         p setToRoom: rooms getVentilationShaft.
         p setIsLocked: false.
-        rooms getExitRoom getDirections at: 'east' put: p.
+        rooms getExitRoom getDirections at: 'west' put: p.
 
         ^rooms
     ]
