@@ -138,6 +138,11 @@ Object subclass: GameController [
                 self handleUnlock: cmd
             ].
 
+            (cmd startsWith: 'put on') ifTrue: [
+                isUnknown := false.
+                self handlePutOn: cmd.
+            ].
+
             cmd = 'quit' ifTrue: [
                 isGameOver := true.
                 isUnknown := false
@@ -304,16 +309,38 @@ Object subclass: GameController [
         ^inspected.
     ]
 
+    handlePutOn: cmd [
+        | query toolChest |
+        query := cmd copyFrom: 8.
+        (query = InteractableFactory labShoes getName) ifTrue: [
+            (self getGame getLabShoesOn) ifTrue: [
+                Transcript show: 'You''ve already put them on'; cr.
+                ^nil.
+                ].
+            (self getGame inventoryContains: InteractableFactory labShoes getName) ifTrue: [
+                "unlock the tool chest and change its description"
+                toolChest := self getGame getAllRooms getExperimentRoom getItemByName: InteractableFactory toolChest getName.
+                self getGame setLabShoesOn: true.
+                toolChest setIsLocked: false.
+                toolChest setDescription: DescriptionFactory toolChestWearingShoes.
+                Transcript show: 'You put the shoes on. They feel solid and heavy.'.
+            ]
+            ifFalse:[Transcript show: 'You need to acquire them first.'; cr].
+        ]
+        ifFalse: [Transcript show: 'Can''t put this on.'; cr].
+    ]
+
 
     handleInventory [
         self printLines: self getGame listInventory
     ]
 
     handleUnlock: cmd [
-        |query room path key validQuery compartment|
+        |query room path key validQuery compartment g|  
         room := self getGame getCurrentRoom.
         query := cmd copyFrom: 8 to: cmd size.
         validQuery := false.
+        g := self getGame.
 
         "unlock the doors"
         (directions includes: query) ifTrue: [
@@ -326,7 +353,7 @@ Object subclass: GameController [
             path := room getDirections at: query.
             path getIsLocked ifFalse: [Transcript show: 'Path is already unlocked'; cr. ^nil].
             key := path getOpenedBy.
-            self getGame getInventory do: [ :ie|
+            g getInventory do: [ :ie|
                 (ie getItem getName = key getName) ifTrue: [
                     path setIsLocked: false.
                     Transcript show: 'Ok, unlocked.'; cr.
@@ -339,10 +366,10 @@ Object subclass: GameController [
         ].
 
         "unlock the compartment"
-        (query = InteractableFactory compartment getName & self getGame getCurrentRoom getName = RoomFactory lockerRoom getName) ifTrue: [
+        (query = InteractableFactory compartment getName & g getCurrentRoom getName = RoomFactory lockerRoom getName) ifTrue: [
             validQuery := true.
-            compartment := self getGame getCurrentRoom getItemByName: InteractableFactory compartment getName.
-            (self getGame inventoryContains: compartment getOpenedBy getName) ifTrue: [
+            compartment := g getCurrentRoom getItemByName: InteractableFactory compartment getName.
+            (g inventoryContains: compartment getOpenedBy getName) ifTrue: [
                 compartment setIsLocked: false.
                 Transcript show: 'Ok, unlocked.'; cr.
             ]
@@ -350,6 +377,28 @@ Object subclass: GameController [
                 Transcript show: 'You cannot unlock this. Perhaps you need some key?'; cr.
             ].
         ].
+
+        "Unlock the vent"
+        (query = 'vent') ifTrue: [
+            g getVentBlocked ifFalse: [
+                Transcript show: 'It''s already unlocked.'; cr.
+                ^nil.
+            ] ifTrue: [
+                validQuery := true.
+                (g getCurrentRoom getName = RoomFactory generatorRoom getName & g inventoryContains: InteractableFactory crowbar getName) ifTrue: [
+                    validQuery := true.
+                    self printLines: #('You slide the crowbar between the vent door and its door frame'
+                                'and push with a lot of force. The vent swings open!').
+                    g setVentBlocked: false.
+                    self handleUnlock: 'unlock east'.
+                ] ifFalse: [
+                    self printLines: #('The vent is closed shut and the door doesn''t seem to budge.'
+                        'Maybe using some tool would help?').
+                ].
+            ].
+        ].
+
+
         validQuery ifFalse: [Transcript show: 'I don''t see that here'; cr].
     ]
 ]

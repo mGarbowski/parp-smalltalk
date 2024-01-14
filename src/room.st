@@ -201,7 +201,7 @@ Object subclass: RoomFactory [
                 'As you explore the generator room, the dormant generator at the center stands in'
                 'stark contrast to the adjacent ventilation shaft. The idle turbines offer a'
                 'glimpse into the halted functionality of the lab''s power source.'
-                'The ventilation shaft on the southern wall,'
+                'The ventilation shaft on the eastern wall,'
                 'though vibrating with a faint breeze, seems large enough for someone to fit through.'
             )
             hint: #('You can interact with generator, vent or go south').
@@ -342,6 +342,12 @@ Object subclass: RoomFactory [
         p setIsLocked: false.
         rooms getGeneratorRoom getDirections at: 'south' put: p.
 
+        p := Path new.
+        p setToRoom: rooms getVentilationShaft.
+        p setIsLocked: true.
+        p setOpenedBy: InteractableFactory crowbar.
+        rooms getGeneratorRoom getDirections at: 'east' put: p.
+
         "experiment room"
         p := Path new.
         p setToRoom: rooms getCorridorTwo.
@@ -363,7 +369,7 @@ Object subclass: RoomFactory [
         p := Path new.
         p setToRoom: rooms getGeneratorRoom.
         p setIsLocked: false.
-        rooms getVentilationShaft getDirections at: 'north' put: p.
+        rooms getVentilationShaft getDirections at: 'west' put: p.
 
         p := Path new.
         p setToRoom: rooms getComputerRoom.

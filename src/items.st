@@ -58,11 +58,11 @@ Object subclass: InteractableFactory [
         toolChestItems := {self powerCell. self crowbar}.
         ^ Container
             name: 'tool chest'
-            description: #('Inside there is a crowbar and a power cell')
-            hint: #('Wearing the shoes, you can cross the toxic puddle and reach into the tool chest')
+            description: #('Red, metallic tool chest lies across the room. If only you had some protective gear to cross the sludge...')
+            hint: #('Maybe if you wore some protective gear, you could cross the toxic puddle and reach into the tool chest?')
             itemsInside: toolChestItems
-            locked: false
-            openedBy: nil. "todo: maybe just put lab shoes here?"
+            locked: true
+            openedBy: nil.
     ]
 
     InteractableFactory class >> compartment [

@@ -21,6 +21,9 @@ Object subclass: DescriptionFactory [
         DescriptionFactory class >> brokenDoorKeyTaken [
         ^#('A massive door, ripped out of its hinges is laying on the floor next to the entrance it used to guard.')
     ]
+        DescriptionFactory class >> toolChestWearingShoes [
+        ^#('Inside there is a crowbar and a power cell. These could come in handy!')
+    ]
 ]
 
 
