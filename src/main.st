@@ -345,7 +345,7 @@ Object subclass: GameController [
                 toolChest setIsLocked: false.
                 toolChest setDescription: DescriptionFactory toolChestWearingShoes.
                 experimentRoom setHint: HintFactory experimentRoomShoesOn.
-                Transcript show: 'You put the shoes on. They feel solid and heavy.'.
+                Transcript show: 'You put the shoes on. They feel solid and heavy.'; cr.
             ]
             ifFalse:[Transcript show: 'You need to acquire them first.'; cr].
         ]
@@ -415,6 +415,7 @@ Object subclass: GameController [
                     'The generator springs to life with a reassuring hum. Lights flicker on, flooding the room with a steady glow.'
                     'The air vibrates with renewed energy, and the machinery''s gentle rumble signals success, powering up the entire lab.').
             self getGame setGeneratorOn: true.
+            self getGame removeItem: InteractableFactory powerCell getName.
             generator setDescription: DescriptionFactory generatorOn.
         ]
 
@@ -460,7 +461,7 @@ Object subclass: GameController [
         query := cmd copyFrom: 7.
         (query startsWith: 'pin ') ifTrue: [self handleEnterPin: cmd. ^nil].
         (query = InteractableFactory elevator getName) ifTrue: [self handleEnterElevator. ^nil].
-        Transcript show: 'Can''t enter this object.'.
+        Transcript show: 'Can''t enter this object.'; cr.
     ]
 
     handleEnterElevator [

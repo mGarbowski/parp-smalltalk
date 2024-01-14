@@ -252,7 +252,7 @@ Object subclass: RoomFactory [
                 'its center. On the desk rests a computer, its screen silent and'
                 'dark. The absence of the usual hum of electronic activity adds an eerie calm'
                 'to the room, leaving the space seemingly dormant.'
-                'To the west there is a door locked from this side.'
+                'To the west there is a locked door. Perhaps it''s the one you''ve seen from the other side in the corridor?.'
             )
             hint: #('You can interact with: computer, desk, vent or try the door to the west').
         r getInteractables add: InteractableFactory computer.
@@ -266,7 +266,7 @@ Object subclass: RoomFactory [
         r := Room
             name: 'ventilation shaft'
             description: #('You are in the vent shaft. You can proceed east, south or north')
-            hint: #('You can proceed east, south or north').
+            hint: #('You can proceed east, south or west').
         ^r
     ]
 
@@ -361,6 +361,11 @@ Object subclass: RoomFactory [
         p setIsLocked: true.
         rooms getComputerRoom getDirections at: 'west' put: p.
 
+        p := Path new.
+        p setToRoom: rooms getVentilationShaft.
+        p setIsLocked: false.
+        rooms getComputerRoom getDirections at: 'north' put: p.
+
         "ventilation shaft"
         p := Path new.
         p setToRoom: rooms getExitRoom.
@@ -376,6 +381,12 @@ Object subclass: RoomFactory [
         p setToRoom: rooms getComputerRoom.
         p setIsLocked: false.
         rooms getVentilationShaft getDirections at: 'south' put: p.
+
+        "exit room"
+        p := Path new.
+        p setToRoom: rooms getVentilationShaft.
+        p setIsLocked: false.
+        rooms getExitRoom getDirections at: 'east' put: p.
 
         ^rooms
     ]
