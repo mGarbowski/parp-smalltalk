@@ -1,24 +1,24 @@
-# Smalltalk - projekt
+# Smalltalk Project
+Text-based puzzle adventure game, written in GNU Smalltalk programming language.
+Assignment for Programing Paradigms course @ Warsaw University of Technology.
+
+[Example gameplay](./docs/playthrough.txt)
+
+## Authors
 * Mikołaj Garbowski
 * Maksym Bieńkowski
 
-Gra tekstowa w języku GNU Smalltalk.
-
-Zadanie projektowe na przedmiot Paradygmaty Programowania.
-
-[Przykładowa rozgrywka](./docs/playthrough.txt)
-
-## Instalacja
-Wymaga instalacja maszyny wirtualnej `gst` do uruchomienia.
+## Installation
+Requires `gst` GNU Smalltalk virtual machine to run.
 
 ```shell
 sudo apt install gnu-smalltalk
 ```
 
-## Uruchomienie
+## Run the game
 ```shell
 ./run
 ```
 
-## Diagram klas
+## Class diagram
 ![class diagram](./docs/class-diagram.png)
