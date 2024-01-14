@@ -32,4 +32,8 @@ Object subclass: HintFactory [
     HintFactory class >> ventUnlocked [
         ^#('You can now enter the ventilation shaft by going in its direction')
     ]
+
+    HintFactory class >> experimentRoomShoesOn [
+        ^#('With the shoes you''re wearing, you can interact with the chest. You can go east.')
+    ]
 ]

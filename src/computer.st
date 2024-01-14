@@ -1,6 +1,6 @@
 Object subclass: Computer [
 
-    Computer class >> runComputer [
+    Computer class >> run [
         | input |
         "Main computer input loop"
         [ true ] whileTrue: [

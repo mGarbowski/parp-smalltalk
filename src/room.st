@@ -143,7 +143,6 @@ Object subclass: RoomFactory [
             )
             hint: #('You can interact with the locker, go north or go east, inspect the keypad next to security doors to find out more.').
 
-        r getItems add: InteractableFactory lockerRoomKey.
         r getInteractables add: InteractableFactory locker.
         r getInteractables add: InteractableFactory coat.
         r getInteractables add: InteractableFactory compartment.
@@ -236,7 +235,9 @@ Object subclass: RoomFactory [
                 'you could see what''s inside. The door was blown open by the failure of the experiment, it seems.'
                 'The broken door is laying next to where you stand.'
             )
-            hint: #('You need to acquire some protective gear to walk through the toxic sludge.').
+            hint: #('You can go east, interact with the tool chest and broken door.' 
+                'You need to acquire some protective gear to walk through the toxic sludge.').
+
         r getInteractables add: InteractableFactory toolChest.
         r getInteractables add: InteractableFactory brokenDoor.
         ^r

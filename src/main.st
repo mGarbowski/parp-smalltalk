@@ -324,7 +324,7 @@ Object subclass: GameController [
     ]
 
     handlePutOn: cmd [
-        | query toolChest |
+        | query toolChest experimentRoom |
         query := cmd copyFrom: 8.
         (query = InteractableFactory labShoes getName) ifTrue: [
             (self getGame getLabShoesOn) ifTrue: [
@@ -334,9 +334,11 @@ Object subclass: GameController [
             (self getGame inventoryContains: InteractableFactory labShoes getName) ifTrue: [
                 "unlock the tool chest and change its description"
                 toolChest := self getGame getAllRooms getExperimentRoom getItemByName: InteractableFactory toolChest getName.
+                experimentRoom := self getGame getAllRooms getExperimentRoom.
                 self getGame setLabShoesOn: true.
                 toolChest setIsLocked: false.
                 toolChest setDescription: DescriptionFactory toolChestWearingShoes.
+                experimentRoom setHint: HintFactory experimentRoomShoesOn.
                 Transcript show: 'You put the shoes on. They feel solid and heavy.'.
             ]
             ifFalse:[Transcript show: 'You need to acquire them first.'; cr].
@@ -365,8 +367,21 @@ Object subclass: GameController [
             ^nil.
         ].
 
+        (query = (InteractableFactory computer getName)) ifTrue: [
+            self tryPowerOnComputer.
+            ^nil.
+        ].
+
         Transcript show: 'Can''t power this on.'; cr.
         ^nil.
+    ]
+
+    tryPowerOnComputer [
+        (self getGame getCurrentRoom getName = RoomFactory computerRoom getName) ifTrue: [
+            Computer run.
+        ] ifFalse: [
+            Transcript show: 'Which computer? Get closer to it.'; cr.
+        ].
     ]
 
     tryPowerOnGenerator [

@@ -29,11 +29,6 @@ Object subclass: Game [
         g setAllRooms: RoomFactory getRooms.
         g setCurrentRoom: g getAllRooms getLockerRoom.
         g setInventory: OrderedCollection new.
-        "TODO: REMOVE"        
-        g addItem: InteractableFactory crowbar.
-        g addItem: InteractableFactory powerCell.
-        g setCurrentRoom: g getAllRooms getGeneratorRoom.
-
         g setGeneratorOn: false.
         g setElevatorOn: false.
         g setVentBlocked: true.
