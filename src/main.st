@@ -140,6 +140,11 @@ Object subclass: GameController [
                 self handleUnlock: cmd
             ].
 
+            (cmd startsWith 'power on') ifTrue: [
+                isUnknown := false.
+                self handlePowerOn: cmd.
+            ].
+
             cmd = 'quit' ifTrue: [
                 isGameOver := true.
                 isUnknown := false
@@ -266,6 +271,12 @@ Object subclass: GameController [
 
     handleInventory [
         self printLines: self getGame listInventory
+    ]
+
+    handlePowerOn: cmd [
+        |query|
+        query := cmd copyFrom: 10.
+        (query = InteractableFactory generator getName) ifFalse: [Transcript show: 'Can''t power this on.'; cr. ^nil.]
     ]
 
     handleUnlock: cmd [
