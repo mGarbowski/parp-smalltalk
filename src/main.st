@@ -336,17 +336,23 @@ Object subclass: GameController [
     ]
 
     handlePowerOn: cmd [
-        |query cellCount|
+        | query |
         query := cmd copyFrom: 10.
-        
-        "not generator"
-        (query = InteractableFactory generator getName) ifFalse: [
-            Transcript show: 'Can''t power this on.'; cr.
+
+        "Check if the player is trying to power on the generator"
+        (query = (InteractableFactory generator getName)) ifTrue: [
+            self tryPowerOnGenerator.
             ^nil.
-            ]
-        
-        "generator"
-        ifTrue: [self tryPowerOnGenerator. ^nil.].
+        ].
+
+        "Check if the player is trying to power on the elevator"
+        (query = (InteractableFactory elevator getName)) ifTrue: [
+            self tryPowerOnElevator.
+            ^nil.
+        ].
+
+        Transcript show: 'Can''t power this on.'; cr.
+        ^nil.
     ]
 
     tryPowerOnGenerator [
@@ -382,6 +388,40 @@ Object subclass: GameController [
             Transcript show: 'Power remains elusive without the necessary cells. Find and install them to awaken this dormant machine.'; cr.
         ]
     ]
+
+    tryPowerOnElevator [
+        | elevator securityRoomMsg |
+
+        elevator := self getGame getAllRooms getExitRoom getItemByName: InteractableFactory elevator getName.
+        securityRoomMsg := 'You hear an unpleasant <buzz>, looks like the backup power supply system is not enough to power the elevator. It needs more juice!'.
+
+        "Check if the player is in the Security Room"
+        (self getGame getCurrentRoom getName) = (RoomFactory securityRoom getName) ifTrue: [
+            
+            "Check if the elevator is already powered"
+            (self getGame getElevatorOn) ifTrue: [
+                Transcript show: 'It is already powered, it really won''t work any better if you spam this button...'; cr.
+                ^nil.
+            ].
+
+            "Check if the generator is off"
+            (self getGame getGeneratorOn) ifFalse: [
+                Transcript show: securityRoomMsg; cr.
+                ^nil.
+            ].
+
+            "Power on the elevator"
+            Transcript show: 'You hear a satisfying <click>. The elevator powers on, ready to take you to new heights!'; cr.
+            self getGame setElevatorOn: true.
+            elevator setDescription: DescriptionFactory elevatorOn.
+
+        ] ifFalse: [
+            Transcript show: 'How?'; cr.
+        ].
+    ]
+
+    
+
 
     handleUnlock: cmd [
         |query room path key validQuery compartment g|  
