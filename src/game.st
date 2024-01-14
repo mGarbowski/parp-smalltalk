@@ -93,7 +93,7 @@ Object subclass: Game [
     ]
 
     inventoryContains: itemName [
-        ^(self getEntryOrNil: itemName ~= nil)
+        ^(self getEntryOrNil: itemName) notNil.
     ]
 
     getEntryOrNil: itemName [

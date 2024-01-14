@@ -310,11 +310,14 @@ Object subclass: GameController [
     ]
 
     handleUnlock: cmd [
-        |query room path key|
+        |query room path key validQuery compartment|
         room := self getGame getCurrentRoom.
         query := cmd copyFrom: 8 to: cmd size.
+        validQuery := false.
 
+        "unlock the doors"
         (directions includes: query) ifTrue: [
+            validQuery := true.
             (room hasPath: query) ifFalse: [
                 Transcript show: 'There is no path in this direction'; cr.
                 ^nil
@@ -326,14 +329,28 @@ Object subclass: GameController [
             self getGame getInventory do: [ :ie|
                 (ie getItem getName = key getName) ifTrue: [
                     path setIsLocked: false.
-                    Transcript show: 'Ok'; cr.
+                    Transcript show: 'Ok, unlocked.'; cr.
                     ^nil
                 ]
             ].
 
-            Transcript show: 'You cannot open this'; cr.
-            ^nil
-        ]
+            Transcript show: 'You cannot unlock this. Perhaps you need some key?'; cr.
+            ^nil.
+        ].
+
+        "unlock the compartment"
+        (query = InteractableFactory compartment getName & self getGame getCurrentRoom getName = RoomFactory lockerRoom getName) ifTrue: [
+            validQuery := true.
+            compartment := self getGame getCurrentRoom getItemByName: InteractableFactory compartment getName.
+            (self getGame inventoryContains: compartment getOpenedBy getName) ifTrue: [
+                compartment setIsLocked: false.
+                Transcript show: 'Ok, unlocked.'; cr.
+            ]
+            ifFalse: [
+                Transcript show: 'You cannot unlock this. Perhaps you need some key?'; cr.
+            ].
+        ].
+        validQuery ifFalse: [Transcript show: 'I don''t see that here'; cr].
     ]
 ]
 
