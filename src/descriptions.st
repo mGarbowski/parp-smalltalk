@@ -30,6 +30,6 @@ Object subclass: DescriptionFactory [
 "Same thing, but with hints"
 Object subclass: HintFactory [
     HintFactory class >> ventUnlocked [
-        ^#('You can `enter` the vent')
+        ^#('You can now enter the ventilation shaft by going in its direction')
     ]
 ]
