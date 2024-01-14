@@ -181,15 +181,16 @@ Object subclass: GameController [
         (items size = 1) ifFalse: [self printLines: items].
     ]
 
-    "todo also handle items in the inventory"
     handleHint: cmd [
-        |iName interactables found obj|
+        |iName hintables found obj|
+        hintables := OrderedCollection new.
 
         iName := cmd copyFrom: 6 to: cmd size.
-        interactables := self getGame getCurrentRoom getAllInteractables.
+        hintables addAll: self getGame getCurrentRoom getAllInteractables.
+        hintables addAll: self getGame getInventoryItems.
         found := false.
 
-        interactables do: [ :i |
+        hintables do: [ :i |
             i getName = iName ifTrue: [
                 found := true.
                 obj := i.
@@ -198,7 +199,7 @@ Object subclass: GameController [
 
         found
             ifTrue: [self printLines: obj getHint]
-            ifFalse: [Transcript show: 'I dont see that here...'; cr]
+            ifFalse: [Transcript show: 'I don''t see that here...'; cr]
     ]
 
     handleGo: cmd [
