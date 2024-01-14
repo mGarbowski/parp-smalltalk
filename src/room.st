@@ -92,10 +92,10 @@ GameObject subclass: Room [
     ]
 ]
 
-Object subclass: Rooms [
+Object subclass: RoomSet [
     |lockerRoom securityRoom corridorOne corridorTwo generatorRoom exitRoom experimentRoom computerRoom ventilationShaft|
 
-    Rooms class >> new [
+    RoomSet class >> new [
         |r|
         r := super new.
         ^r
@@ -271,10 +271,10 @@ Factory subclass: RoomFactory [
     ]
 
 
-    "Return Rooms object populated with all rooms and with all paths added"
+    "Return RoomSet object populated with all rooms and with all paths added"
     RoomFactory class >> getRooms [
         |rooms p|
-        rooms := Rooms new.
+        rooms := RoomSet new.
         rooms setLockerRoom: RoomFactory lockerRoom.
         rooms setSecurityRoom: RoomFactory securityRoom.
         rooms setCorridorOne: RoomFactory corridorOne.
