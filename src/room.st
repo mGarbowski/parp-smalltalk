@@ -147,6 +147,7 @@ Object subclass: RoomFactory [
         r getInteractables add: InteractableFactory locker.
         r getInteractables add: InteractableFactory coat.
         r getInteractables add: InteractableFactory compartment.
+        r getInteractables add: InteractableFactory keypad.
         ^r
     ]
 
@@ -162,7 +163,7 @@ Object subclass: RoomFactory [
                 'suggesting a pivotal role in the functionality of the facility.'
             )
             hint: #('You can interact with the control panel or go south').
-        r getInteractables add: InteractableFactory keypad.
+        r getInteractables add: InteractableFactory controlPanel.
         ^r
     ]
 

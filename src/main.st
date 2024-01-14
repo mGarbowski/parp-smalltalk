@@ -133,9 +133,9 @@ Object subclass: GameController [
                 self handleInventory
             ].
 
-            (cmd startsWith: 'enter pin ') ifTrue: [
+            (cmd startsWith: 'enter') ifTrue: [
                 isUnknown := false.
-                self handleEnterPin: cmd
+                self handleEnter: cmd
             ].
 
             (cmd startsWith: 'unlock ') ifTrue: [
@@ -429,6 +429,35 @@ Object subclass: GameController [
         ] ifFalse: [
             Transcript show: 'How?'; cr.
         ].
+    ]
+
+    handleEnter: cmd [
+        |query|
+        query := cmd copyFrom: 7.
+        (query startsWith: 'pin ') ifTrue: [self handleEnterPin: cmd. ^nil].
+        (query = InteractableFactory elevator getName) ifTrue: [self handleEnterElevator. ^nil].
+        Transcript show: 'Can''t enter this object.'.
+    ]
+
+    handleEnterElevator [
+        |elevOffMsg outro|
+        elevOffMsg := #('You enter the elevator, but it is not responsive to you pressing the buttons, the security'
+          'override is in effect.').
+        outro := #('As you ascend through the elevator, leaving the depths of the lab behind, a sense'
+            'of accomplishment washes over you. The familiar hum of the machinery gradually'
+            'fades as you reach the surface, greeted by natural light and the open air. The'
+            'door opens, revealing a world beyond the confines of the secretive lab. You have'
+            'successfully escaped, leaving the mysteries and experiments behind. What lies'
+            'ahead is a new chapter, and the journey to freedom is now yours to explore.'
+            ''
+            'The game is over. Thanks for playing!').
+
+        (self getGame getElevatorOn) ifTrue: [
+            self printLines: outro.
+            isGameOver := true.
+        ] ifFalse: [
+            self printLines: elevOffMsg.
+        ]
     ]
 
     handleEnterPin: cmd [
