@@ -243,12 +243,16 @@ Object subclass: GameController [
     ]
 
     handleInspect: cmd [
-        |itemName validItem roomInspectables|
+        |itemName validItem roomInspectables allInspectables|
         validItem := false.
         itemName := cmd copyFrom: 9.
-        roomInspectables := self getGame getCurrentRoom getAllInteractables.
+        allInspectables := self getGame getCurrentRoom getAllInteractables.
+        allInspectables addAll: self getGame getInventoryItems.
 
-        roomInspectables do: [ :i|
+
+        (self trySpecialInspect: itemName) ifTrue: [^nil.].
+
+        allInspectables do: [ :i|
             (itemName = i getName) ifTrue: [
                 self printLines: i getDescription.
                 validItem := true.
@@ -259,6 +263,45 @@ Object subclass: GameController [
             Transcript show: 'I don''t see that here.'; nl.
         ].
         ^nil.
+    ]
+
+
+    trySpecialInspect: itemName [
+        "Inspecting the coat and broken door yields an item,
+        but just once. These need to be handled separately."
+        "coat case"
+        | currentRoomName g specialItem inspected holdingCoat |
+        g := self getGame.
+        inspected := false.
+        currentRoomName := g getCurrentRoom getName.
+
+        (itemName = InteractableFactory coat getName & currentRoomName = RoomFactory lockerRoom getName) ifTrue: [
+            g getCoatKeyTaken ifFalse: [
+                inspected := true.
+                "Modify the inventory and gamestate"
+                g addItem: InteractableFactory lockerRoomKey.
+                g setCoatKeyTaken: true.
+                "Print and set new description"
+                specialItem := g getCurrentRoom getItemByName: InteractableFactory coat getName.
+                self printLines: specialItem getDescription.
+                specialItem setDescription: DescriptionFactory coatKeyTaken.
+            ] .
+        ].
+
+        "broken door case"
+        (itemName = InteractableFactory brokenDoor getName & currentRoomName = RoomFactory experimentRoom getName) ifTrue: [
+            g getBrokenDoorKeyTaken ifFalse: [
+                inspected := true.
+                "Modify the inventory and gamestate"
+                g addItem: InteractableFactory smallKey.
+                g setBrokenDoorKeyTaken: true.
+                "Printe and set new description"
+                specialItem := g getCurrentRoom getItemByName: InteractableFactory brokenDoor getName.
+                self printLines: specialItem getDescription.
+                specialItem setDescription: DescriptionFactory brokenDoorKeyTaken.
+            ].
+        ].
+        ^inspected.
     ]
 
 

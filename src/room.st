@@ -81,6 +81,15 @@ GameObject subclass: Room [
     removeItem: item [
         self getItems identityRemove: item
     ]
+
+    getItemByName: itemName [
+        |foundItem|
+        foundItem := nil.
+        self getAllInteractables do: [ :i |
+            (i getName = itemName) ifTrue: [foundItem := i].
+        ].
+        ^foundItem.
+    ]
 ]
 
 Object subclass: Rooms [
@@ -136,6 +145,7 @@ Object subclass: RoomFactory [
 
         r getItems add: InteractableFactory lockerRoomKey.
         r getInteractables add: InteractableFactory locker.
+        r getInteractables add: InteractableFactory coat.
         r getInteractables add: InteractableFactory compartment.
         ^r
     ]

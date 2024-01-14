@@ -9,11 +9,11 @@ Object subclass: InteractableFactory [
     ]
 
     InteractableFactory class >> coat [
-        ^Item
+        ^Interactable
             name: 'coat'
             description: #('The lab coat stirs a sense of familiarity. The nametag reads: "Dr. J. Sysy.", it triggers a cascade of hazy memories.'
                            'As you run your fingers over the fabric, flashes of experiments and research echo in your mind. Memories start coming back to you, it is your coat!'
-                           'Instinctively you check your pockets. You feel a small, cold object - a *heavy key*'
+                           'Instinctively you check your pockets. You feel a small, cold object - a *heavy key*. You decide to take it. It might prove useful.'
                            )
             hint: #('Take a good look at it, maybe you will find something useful')
     ]
@@ -47,15 +47,10 @@ Object subclass: InteractableFactory [
     ]
     
     InteractableFactory class >> locker [
-        |lockerItems|
-        lockerItems := {self coat}.
-        ^ Container
+        ^ Interactable 
             name: 'locker'
             description: #('A locker for storing personal items. The locker reveals two compartments, in the upper part, a lab coat hangs neatly on a hanger. Below there is another compartment.')
             hint: 'Look what is inside'
-            itemsInside: lockerItems
-            locked: false
-            openedBy: nil
     ]
 
     InteractableFactory class >> toolChest [
