@@ -38,15 +38,18 @@ Object subclass: GameController [
     instructionsText := #(
         'Available commands are:'
         ''
-        'instructions  -- to see these instructions'
-        'go DIR        -- to go in DIR direction'
-        'unlock DIR    -- to unlock doors in direction DIR'
-        'look          -- to look around the room you are in'
-        'take X        -- to pick up X and store it in your inventory'
-        'inventory     -- to see your inventory'
-        'hint here     -- to see a hint about the room you are in'
-        'hint X        -- to see a hint about X'
-        'quit          -- to end the game and quit'
+        'instructions       -- to see these instructions'
+        'go DIR             -- to go in DIR direction'
+        'unlock DIR/CONT    -- to unlock doors in direction DIR or containers'
+        'look               -- to look around the room you are in'
+        'inspect X          -- to take a closer look at X'
+        'take X             -- to pick up X and store it in your inventory'
+        'inventory          -- to see your inventory'
+        'hint here          -- to see a hint about the room you are in'
+        'hint X             -- to see a hint about X'
+        'enter X            -- to enter X'
+        'power on X         -- to power on X'
+        'quit               -- to end the game and quit'
         ''
     ).
  
@@ -95,6 +98,7 @@ Object subclass: GameController [
 
             isUnknown := true.
             cmd := self readCommand.
+            self printLines: #('').
 
             cmd = 'instructions' ifTrue: [
                 self printInstructions.
@@ -148,6 +152,11 @@ Object subclass: GameController [
                 self handlePowerOn: cmd.
             ].
 
+            (cmd startsWith: 'put on') ifTrue: [
+                isUnknown := false.
+                self handlePutOn: cmd.
+            ].
+
             cmd = 'quit' ifTrue: [
                 isGameOver := true.
                 isUnknown := false
@@ -155,7 +164,7 @@ Object subclass: GameController [
                 
             isUnknown ifTrue: [
                 self printLines: #('Unknown command.' '')
-            ]
+            ].
         ]
     ]
 
@@ -172,15 +181,16 @@ Object subclass: GameController [
         (items size = 1) ifFalse: [self printLines: items].
     ]
 
-    "todo also handle items in the inventory"
     handleHint: cmd [
-        |iName interactables found obj|
+        |iName hintables found obj|
+        hintables := OrderedCollection new.
 
         iName := cmd copyFrom: 6 to: cmd size.
-        interactables := self getGame getCurrentRoom getAllInteractables.
+        hintables addAll: self getGame getCurrentRoom getAllInteractables.
+        hintables addAll: self getGame getInventoryItems.
         found := false.
 
-        interactables do: [ :i |
+        hintables do: [ :i |
             i getName = iName ifTrue: [
                 found := true.
                 obj := i.
@@ -189,7 +199,7 @@ Object subclass: GameController [
 
         found
             ifTrue: [self printLines: obj getHint]
-            ifFalse: [Transcript show: 'I dont see that here...'; cr]
+            ifFalse: [Transcript show: 'I don''t see that here...'; cr]
     ]
 
     handleGo: cmd [
@@ -321,7 +331,7 @@ Object subclass: GameController [
     ]
 
     handlePutOn: cmd [
-        | query toolChest |
+        | query toolChest experimentRoom |
         query := cmd copyFrom: 8.
         (query = InteractableFactory labShoes getName) ifTrue: [
             (self getGame getLabShoesOn) ifTrue: [
@@ -331,10 +341,12 @@ Object subclass: GameController [
             (self getGame inventoryContains: InteractableFactory labShoes getName) ifTrue: [
                 "unlock the tool chest and change its description"
                 toolChest := self getGame getAllRooms getExperimentRoom getItemByName: InteractableFactory toolChest getName.
+                experimentRoom := self getGame getAllRooms getExperimentRoom.
                 self getGame setLabShoesOn: true.
                 toolChest setIsLocked: false.
                 toolChest setDescription: DescriptionFactory toolChestWearingShoes.
-                Transcript show: 'You put the shoes on. They feel solid and heavy.'.
+                experimentRoom setHint: HintFactory experimentRoomShoesOn.
+                Transcript show: 'You put the shoes on. They feel solid and heavy.'; cr.
             ]
             ifFalse:[Transcript show: 'You need to acquire them first.'; cr].
         ]
@@ -362,8 +374,21 @@ Object subclass: GameController [
             ^nil.
         ].
 
+        (query = (InteractableFactory computer getName)) ifTrue: [
+            self tryPowerOnComputer.
+            ^nil.
+        ].
+
         Transcript show: 'Can''t power this on.'; cr.
         ^nil.
+    ]
+
+    tryPowerOnComputer [
+        (self getGame getCurrentRoom getName = RoomFactory computerRoom getName) ifTrue: [
+            Computer run.
+        ] ifFalse: [
+            Transcript show: 'Which computer? Get closer to it.'; cr.
+        ].
     ]
 
     tryPowerOnGenerator [
@@ -391,6 +416,7 @@ Object subclass: GameController [
                     'The generator springs to life with a reassuring hum. Lights flicker on, flooding the room with a steady glow.'
                     'The air vibrates with renewed energy, and the machinery''s gentle rumble signals success, powering up the entire lab.').
             self getGame setGeneratorOn: true.
+            self getGame removeItem: InteractableFactory powerCell getName.
             generator setDescription: DescriptionFactory generatorOn.
         ]
 
@@ -436,7 +462,7 @@ Object subclass: GameController [
         query := cmd copyFrom: 7.
         (query startsWith: 'pin ') ifTrue: [self handleEnterPin: cmd. ^nil].
         (query = InteractableFactory elevator getName) ifTrue: [self handleEnterElevator. ^nil].
-        Transcript show: 'Can''t enter this object.'.
+        Transcript show: 'Can''t enter this object.'; cr.
     ]
 
     handleEnterElevator [
@@ -499,17 +525,19 @@ Object subclass: GameController [
             path := room getDirections at: query.
             path getIsLocked ifFalse: [Transcript show: 'Path is already unlocked'; cr. ^nil].
             key := path getOpenedBy.
-            g getInventory do: [ :ie|
-                (ie getItem getName = key getName) ifTrue: [
-                    path setIsLocked: false.
-                    "Only show the message if not unlocking the vent since it has a custom one"
-                    (room getName = RoomFactory generatorRoom getName & query = 'east') ifFalse: [
-                        Transcript show: 'Ok, unlocked.'; cr.
-                        ].
-                    ^nil
-                ]
+            (key isNil) ifFalse: [
+                g getInventory do: [ :ie|
+                    (ie getItem getName = key getName) ifTrue: [
+                        path setIsLocked: false.
+                        "Only show the message if not unlocking the vent since it has a custom one"
+                        (room getName = RoomFactory generatorRoom getName & query = 'east') ifFalse: [
+                            Transcript show: 'Ok, unlocked.'; cr.
+                            ].
+                        ^nil
+                    ].
+                ].
             ].
-
+            
             Transcript show: 'You cannot unlock this. Perhaps you need some key?'; cr.
             ^nil.
         ].
@@ -520,6 +548,7 @@ Object subclass: GameController [
             compartment := g getCurrentRoom getItemByName: InteractableFactory compartment getName.
             (g inventoryContains: compartment getOpenedBy getName) ifTrue: [
                 compartment setIsLocked: false.
+                compartment setDescription: DescriptionFactory compartmentUnlocked.
                 Transcript show: 'Ok, unlocked.'; cr.
             ]
             ifFalse: [

@@ -92,10 +92,10 @@ GameObject subclass: Room [
     ]
 ]
 
-Object subclass: Rooms [
+Object subclass: RoomSet [
     |lockerRoom securityRoom corridorOne corridorTwo generatorRoom exitRoom experimentRoom computerRoom ventilationShaft|
 
-    Rooms class >> new [
+    RoomSet class >> new [
         |r|
         r := super new.
         ^r
@@ -125,7 +125,7 @@ Object subclass: Rooms [
 "Factory for creating all room objects
 todo populate rooms with items and interactables
 "
-Object subclass: RoomFactory [
+Factory subclass: RoomFactory [
 
     "Factory methods for creating rooms populated with items and interactables"
 
@@ -143,7 +143,6 @@ Object subclass: RoomFactory [
             )
             hint: #('You can interact with the locker, go north or go east, inspect the keypad next to security doors to find out more.').
 
-        r getItems add: InteractableFactory lockerRoomKey.
         r getInteractables add: InteractableFactory locker.
         r getInteractables add: InteractableFactory coat.
         r getInteractables add: InteractableFactory compartment.
@@ -236,7 +235,9 @@ Object subclass: RoomFactory [
                 'you could see what''s inside. The door was blown open by the failure of the experiment, it seems.'
                 'The broken door is laying next to where you stand.'
             )
-            hint: #('You need to acquire some protective gear to walk through the toxic sludge.').
+            hint: #('You can go east, interact with the tool chest and broken door.' 
+                'You need to acquire some protective gear to walk through the toxic sludge.').
+
         r getInteractables add: InteractableFactory toolChest.
         r getInteractables add: InteractableFactory brokenDoor.
         ^r
@@ -251,7 +252,7 @@ Object subclass: RoomFactory [
                 'its center. On the desk rests a computer, its screen silent and'
                 'dark. The absence of the usual hum of electronic activity adds an eerie calm'
                 'to the room, leaving the space seemingly dormant.'
-                'To the west there is a door locked from this side.'
+                'To the west there is a locked door. Perhaps it''s the one you''ve seen from the other side in the corridor?.'
             )
             hint: #('You can interact with: computer, desk, vent or try the door to the west').
         r getInteractables add: InteractableFactory computer.
@@ -264,16 +265,16 @@ Object subclass: RoomFactory [
         |r|
         r := Room
             name: 'ventilation shaft'
-            description: #('You are in the vent shaft. You can proceed east, south or north')
-            hint: #('You can proceed east, south or north').
+            description: #('You are in the vent shaft. You can proceed east, south or west')
+            hint: #('You can proceed east, south or west').
         ^r
     ]
 
 
-    "Return Rooms object populated with all rooms and with all paths added"
+    "Return RoomSet object populated with all rooms and with all paths added"
     RoomFactory class >> getRooms [
-        |rooms p t k|
-        rooms := Rooms new.
+        |rooms p|
+        rooms := RoomSet new.
         rooms setLockerRoom: RoomFactory lockerRoom.
         rooms setSecurityRoom: RoomFactory securityRoom.
         rooms setCorridorOne: RoomFactory corridorOne.
@@ -360,6 +361,11 @@ Object subclass: RoomFactory [
         p setIsLocked: true.
         rooms getComputerRoom getDirections at: 'west' put: p.
 
+        p := Path new.
+        p setToRoom: rooms getVentilationShaft.
+        p setIsLocked: false.
+        rooms getComputerRoom getDirections at: 'north' put: p.
+
         "ventilation shaft"
         p := Path new.
         p setToRoom: rooms getExitRoom.
@@ -375,6 +381,12 @@ Object subclass: RoomFactory [
         p setToRoom: rooms getComputerRoom.
         p setIsLocked: false.
         rooms getVentilationShaft getDirections at: 'south' put: p.
+
+        "exit room"
+        p := Path new.
+        p setToRoom: rooms getVentilationShaft.
+        p setIsLocked: false.
+        rooms getExitRoom getDirections at: 'west' put: p.
 
         ^rooms
     ]

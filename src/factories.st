@@ -1,6 +1,9 @@
 
+"Factory classes which provide certain objects"
+Object subclass: Factory []
+
 "Class providing descriptions which change during gameplay"
-Object subclass: DescriptionFactory [
+Factory subclass: DescriptionFactory [
     DescriptionFactory class >> elevatorOn [
         ^#(
          'The elevator is operational and stands ready, a beacon of potential escape.'
@@ -24,12 +27,19 @@ Object subclass: DescriptionFactory [
         ^#('As you''re crawling out of the ventilation shaft, you notice an elevator.'
             'Finally, a way out of this maze!')
     ]
+        DescriptionFactory class >> compartmentUnlocked [
+        ^#('In the smaller compartment is pair of sturdy, lab shoes. These could probably come in handy!')
+    ]
 ]
 
 
 "Same thing, but with hints"
-Object subclass: HintFactory [
+Factory subclass: HintFactory [
     HintFactory class >> ventUnlocked [
         ^#('You can now enter the ventilation shaft by going in its direction')
+    ]
+
+    HintFactory class >> experimentRoomShoesOn [
+        ^#('With the shoes you''re wearing, you can interact with the chest. You can go east.')
     ]
 ]
