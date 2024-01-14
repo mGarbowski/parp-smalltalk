@@ -524,17 +524,19 @@ Object subclass: GameController [
             path := room getDirections at: query.
             path getIsLocked ifFalse: [Transcript show: 'Path is already unlocked'; cr. ^nil].
             key := path getOpenedBy.
-            g getInventory do: [ :ie|
-                (ie getItem getName = key getName) ifTrue: [
-                    path setIsLocked: false.
-                    "Only show the message if not unlocking the vent since it has a custom one"
-                    (room getName = RoomFactory generatorRoom getName & query = 'east') ifFalse: [
-                        Transcript show: 'Ok, unlocked.'; cr.
-                        ].
-                    ^nil
-                ]
+            (key isNil) ifFalse: [
+                g getInventory do: [ :ie|
+                    (ie getItem getName = key getName) ifTrue: [
+                        path setIsLocked: false.
+                        "Only show the message if not unlocking the vent since it has a custom one"
+                        (room getName = RoomFactory generatorRoom getName & query = 'east') ifFalse: [
+                            Transcript show: 'Ok, unlocked.'; cr.
+                            ].
+                        ^nil
+                    ].
+                ].
             ].
-
+            
             Transcript show: 'You cannot unlock this. Perhaps you need some key?'; cr.
             ^nil.
         ].
