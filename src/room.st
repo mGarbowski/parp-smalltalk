@@ -273,7 +273,7 @@ Object subclass: RoomFactory [
 
     "Return Rooms object populated with all rooms and with all paths added"
     RoomFactory class >> getRooms [
-        |rooms p t k|
+        |rooms p|
         rooms := Rooms new.
         rooms setLockerRoom: RoomFactory lockerRoom.
         rooms setSecurityRoom: RoomFactory securityRoom.

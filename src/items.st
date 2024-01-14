@@ -50,7 +50,7 @@ Object subclass: InteractableFactory [
         ^ Interactable 
             name: 'locker'
             description: #('A locker for storing personal items. The locker reveals two compartments, in the upper part, a lab coat hangs neatly on a hanger. Below there is another compartment.')
-            hint: 'Look what is inside'
+            hint: #('Look what is inside')
     ]
 
     InteractableFactory class >> toolChest [
