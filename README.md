@@ -6,3 +6,6 @@
 ```shell
 ./run
 ```
+
+## Diagram klas
+![class diagram](./docs/class-diagram.png)
