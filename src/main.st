@@ -16,25 +16,23 @@ Object subclass: GameController [
     directions := #('north' 'south' 'east' 'west').
 
     introductionText := #(
-        'A long time ago, in a galaxy far, far away...'
-        ''
-        'It is a period of civil war. Rebel'
-        'spaceships, striking from a hidden'
-        'base, have won their first victory'
-        'against the evil Galactic Empire.'
-        ''
-        'During the battle, Rebel spies managed'
-        'to steal secret plans to the Empire''s'
-        'ultimate weapon, the Death Star, an'
-        'armored space station with enough'
-        'power to destroy an entire planet.'
-        ''
-        'Pursued by the Empire''s sinister agents,'
-        'Princess Leia races home aboard her'
-        'starship, custodian of the stolen plans'
-        'that can save her people and restore'
-        'freedom to the galaxy....'
-        ''
+    ''
+    'As you slowly open your eyes, a throbbing ache reverberates through your head'
+    'and the acrid scent of chemicals fills the air. Disoriented, you find yourself lying'
+    'on a cold metal floor in what appears to be a dimly lit locker room. The flickering'
+    'light above casts unsettling shadows on the lockers that surround you.'
+    ''
+    'A soft hum of emergency alarms pulsates through the room, and the distant echoes'
+    'of chaotic commotion resonate in the air. Struggling to your feet, you notice a faint'
+    'glow emanating from a small screen hanged on the wall near the entrance.'
+    'The screen flickers to life, displaying a message in stark white letters: '
+    ''
+    '"Dr S., the experiment has failed. Containment breach detected. Evacuation'
+    'protocol initiated. Escape the facility before critical systems fail. Beware of'
+    'anomalies. Your survival is paramount. Time is of the essence.'
+    ''
+    'With a sense of urgency, you realize that your fate is entwined with the impending'
+    'collapse of the lab. The clock is ticking, and the path to freedom is uncertain.'
     ).
 
     instructionsText := #(
@@ -138,6 +136,11 @@ Object subclass: GameController [
             (cmd startsWith: 'unlock ') ifTrue: [
                 isUnknown := false.
                 self handleUnlock: cmd
+            ].
+
+            (cmd startsWith: 'put on') ifTrue: [
+                isUnknown := false.
+                self handlePutOn: cmd.
             ].
 
             cmd = 'quit' ifTrue: [
@@ -245,12 +248,16 @@ Object subclass: GameController [
     ]
 
     handleInspect: cmd [
-        |itemName validItem roomInspectables|
+        |itemName validItem roomInspectables allInspectables|
         validItem := false.
         itemName := cmd copyFrom: 9.
-        roomInspectables := self getGame getCurrentRoom getAllInteractables.
+        allInspectables := self getGame getCurrentRoom getAllInteractables.
+        allInspectables addAll: self getGame getInventoryItems.
 
-        roomInspectables do: [ :i|
+
+        (self trySpecialInspect: itemName) ifTrue: [^nil.].
+
+        allInspectables do: [ :i|
             (itemName = i getName) ifTrue: [
                 self printLines: i getDescription.
                 validItem := true.
@@ -264,16 +271,80 @@ Object subclass: GameController [
     ]
 
 
+    trySpecialInspect: itemName [
+        "Inspecting the coat and broken door yields an item,
+        but just once. These need to be handled separately."
+        "coat case"
+        | currentRoomName g specialItem inspected holdingCoat |
+        g := self getGame.
+        inspected := false.
+        currentRoomName := g getCurrentRoom getName.
+
+        (itemName = InteractableFactory coat getName & currentRoomName = RoomFactory lockerRoom getName) ifTrue: [
+            g getCoatKeyTaken ifFalse: [
+                inspected := true.
+                "Modify the inventory and gamestate"
+                g addItem: InteractableFactory lockerRoomKey.
+                g setCoatKeyTaken: true.
+                "Print and set new description"
+                specialItem := g getCurrentRoom getItemByName: InteractableFactory coat getName.
+                self printLines: specialItem getDescription.
+                specialItem setDescription: DescriptionFactory coatKeyTaken.
+            ] .
+        ].
+
+        "broken door case"
+        (itemName = InteractableFactory brokenDoor getName & currentRoomName = RoomFactory experimentRoom getName) ifTrue: [
+            g getBrokenDoorKeyTaken ifFalse: [
+                inspected := true.
+                "Modify the inventory and gamestate"
+                g addItem: InteractableFactory smallKey.
+                g setBrokenDoorKeyTaken: true.
+                "Printe and set new description"
+                specialItem := g getCurrentRoom getItemByName: InteractableFactory brokenDoor getName.
+                self printLines: specialItem getDescription.
+                specialItem setDescription: DescriptionFactory brokenDoorKeyTaken.
+            ].
+        ].
+        ^inspected.
+    ]
+
+    handlePutOn: cmd [
+        | query toolChest |
+        query := cmd copyFrom: 8.
+        (query = InteractableFactory labShoes getName) ifTrue: [
+            (self getGame getLabShoesOn) ifTrue: [
+                Transcript show: 'You''ve already put them on'; cr.
+                ^nil.
+                ].
+            (self getGame inventoryContains: InteractableFactory labShoes getName) ifTrue: [
+                "unlock the tool chest and change its description"
+                toolChest := self getGame getAllRooms getExperimentRoom getItemByName: InteractableFactory toolChest getName.
+                self getGame setLabShoesOn: true.
+                toolChest setIsLocked: false.
+                toolChest setDescription: DescriptionFactory toolChestWearingShoes.
+                Transcript show: 'You put the shoes on. They feel solid and heavy.'.
+            ]
+            ifFalse:[Transcript show: 'You need to acquire them first.'; cr].
+        ]
+        ifFalse: [Transcript show: 'Can''t put this on.'; cr].
+    ]
+
+
     handleInventory [
         self printLines: self getGame listInventory
     ]
 
     handleUnlock: cmd [
-        |query room path key|
+        |query room path key validQuery compartment g|  
         room := self getGame getCurrentRoom.
         query := cmd copyFrom: 8 to: cmd size.
+        validQuery := false.
+        g := self getGame.
 
+        "unlock the doors"
         (directions includes: query) ifTrue: [
+            validQuery := true.
             (room hasPath: query) ifFalse: [
                 Transcript show: 'There is no path in this direction'; cr.
                 ^nil
@@ -282,17 +353,56 @@ Object subclass: GameController [
             path := room getDirections at: query.
             path getIsLocked ifFalse: [Transcript show: 'Path is already unlocked'; cr. ^nil].
             key := path getOpenedBy.
-            self getGame getInventory do: [ :ie|
+            g getInventory do: [ :ie|
                 (ie getItem getName = key getName) ifTrue: [
                     path setIsLocked: false.
-                    Transcript show: 'Ok'; cr.
+                    "Only show the message if not unlocking the vent since it has a custom one"
+                    (room getName = RoomFactory generatorRoom getName & query = 'east') ifFalse: [
+                        Transcript show: 'Ok, unlocked.'; cr.
+                        ].
                     ^nil
                 ]
             ].
 
-            Transcript show: 'You cannot open this'; cr.
-            ^nil
-        ]
+            Transcript show: 'You cannot unlock this. Perhaps you need some key?'; cr.
+            ^nil.
+        ].
+
+        "unlock the compartment"
+        (query = InteractableFactory compartment getName & g getCurrentRoom getName = RoomFactory lockerRoom getName) ifTrue: [
+            validQuery := true.
+            compartment := g getCurrentRoom getItemByName: InteractableFactory compartment getName.
+            (g inventoryContains: compartment getOpenedBy getName) ifTrue: [
+                compartment setIsLocked: false.
+                Transcript show: 'Ok, unlocked.'; cr.
+            ]
+            ifFalse: [
+                Transcript show: 'You cannot unlock this. Perhaps you need some key?'; cr.
+            ].
+        ].
+
+        "Unlock the vent"
+        (query = 'vent') ifTrue: [
+            g getVentBlocked ifFalse: [
+                Transcript show: 'It''s already unlocked.'; cr.
+                ^nil.
+            ] ifTrue: [
+                validQuery := true.
+                (g getCurrentRoom getName = RoomFactory generatorRoom getName & g inventoryContains: InteractableFactory crowbar getName) ifTrue: [
+                    validQuery := true.
+                    self printLines: #('You slide the crowbar between the vent door and its door frame'
+                                'and push with a lot of force. The vent swings open!').
+                    g setVentBlocked: false.
+                    self handleUnlock: 'unlock east'.
+                ] ifFalse: [
+                    self printLines: #('The vent is closed shut and the door doesn''t seem to budge.'
+                        'Maybe using some tool would help?').
+                ].
+            ].
+        ].
+
+
+        validQuery ifFalse: [Transcript show: 'I don''t see that here'; cr].
     ]
 ]
 

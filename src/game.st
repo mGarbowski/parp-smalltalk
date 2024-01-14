@@ -21,7 +21,7 @@ Object subclass: InventoryEntry [
 
 "Game class storing the game's state"
 Object subclass: Game [
-    |currentRoom allRooms inventory|
+    |currentRoom allRooms inventory generatorOn elevatorOn ventBlocked coatKeyTaken brokenDoorKeyTaken labShoesOn|
 
     Game class >> new [
         |g|
@@ -29,6 +29,12 @@ Object subclass: Game [
         g setAllRooms: RoomFactory getRooms.
         g setCurrentRoom: g getAllRooms getLockerRoom.
         g setInventory: OrderedCollection new.
+        g setGeneratorOn: false.
+        g setElevatorOn: false.
+        g setVentBlocked: true.
+        g setCoatKeyTaken: false.
+        g setBrokenDoorKeyTaken: false.
+        g setLabShoesOn: false.
         ^g
     ]
 
@@ -40,6 +46,24 @@ Object subclass: Game [
 
     getInventory [^inventory]
     setInventory: inv [inventory := inv]
+
+    getGeneratorOn [^generatorOn]
+    setGeneratorOn: bool [generatorOn := bool]
+    
+    getElevatorOn [^elevatorOn]
+    setElevatorOn: bool [elevatorOn := bool]
+
+    getVentBlocked [^ventBlocked]
+    setVentBlocked: bool [ventBlocked := bool]
+
+    getCoatKeyTaken [^coatKeyTaken]
+    setCoatKeyTaken: bool [coatKeyTaken := bool]
+
+    getBrokenDoorKeyTaken [^brokenDoorKeyTaken]
+    setBrokenDoorKeyTaken: bool [brokenDoorKeyTaken := bool]
+
+    getLabShoesOn [^labShoesOn]
+    setLabShoesOn: bool [labShoesOn := bool]
 
     addItem: item [
         |invEntry count|
@@ -70,6 +94,28 @@ Object subclass: Game [
         ].
 
         ^lines
+    ]
+
+    inventoryContains: itemName [
+        ^(self getEntryOrNil: itemName) notNil.
+    ]
+
+    getEntryOrNil: itemName [
+        |entry|
+        entry := nil.
+        self getInventory do: [:ie |
+            (ie getItem getName = itemName) ifTrue: [entry := ie].
+        ].
+        ^entry.
+    ]
+
+    getInventoryItems [
+        |items|
+        items := OrderedCollection new.
+        self getInventory do: [:ie |
+            items add: ie getItem.
+        ].
+        ^items.
     ]
 ]
 
