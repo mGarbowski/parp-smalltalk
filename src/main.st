@@ -133,14 +133,19 @@ Object subclass: GameController [
                 self handleInventory
             ].
 
+            (cmd startsWith: 'enter pin ') ifTrue: [
+                isUnknown := false.
+                self handleEnterPin: cmd
+            ].
+
             (cmd startsWith: 'unlock ') ifTrue: [
                 isUnknown := false.
                 self handleUnlock: cmd
             ].
 
-            (cmd startsWith: 'put on') ifTrue: [
+            (cmd startsWith: 'power on') ifTrue: [
                 isUnknown := false.
-                self handlePutOn: cmd.
+                self handlePowerOn: cmd.
             ].
 
             cmd = 'quit' ifTrue: [
@@ -160,10 +165,11 @@ Object subclass: GameController [
     ]
 
     handleHintHere [
-        |room|
+        |room items|
         room := self getGame getCurrentRoom.
         self printLines: room getHint.
-        self printLines: room listItems
+        items := room listItems.
+        (items size = 1) ifFalse: [self printLines: items].
     ]
 
     "todo also handle items in the inventory"
@@ -182,7 +188,7 @@ Object subclass: GameController [
         ].
 
         found
-            ifTrue: [Transcript show: obj getHint; cr]
+            ifTrue: [self printLines: obj getHint]
             ifFalse: [Transcript show: 'I dont see that here...'; cr]
     ]
 
@@ -243,6 +249,11 @@ Object subclass: GameController [
                 c removeItem: containerItem.
                 ].
             ].
+
+        (self getGame getCurrentRoom getName = RoomFactory exitRoom getName & itemName = InteractableFactory powerCell getName) ifTrue: [
+            "don''t inform the player there is a power cell on the floor if he took"
+            self getGame getAllRooms getExitRoom setDescription: DescriptionFactory exitRoomNoPowerCell.
+        ].
 
         taken ifTrue: [Transcript show: 'Ok'; cr] ifFalse: [Transcript show: 'I don''t see that here'; cr]
     ]
@@ -335,6 +346,112 @@ Object subclass: GameController [
         self printLines: self getGame listInventory
     ]
 
+    handlePowerOn: cmd [
+        | query |
+        query := cmd copyFrom: 10.
+
+        "Check if the player is trying to power on the generator"
+        (query = (InteractableFactory generator getName)) ifTrue: [
+            self tryPowerOnGenerator.
+            ^nil.
+        ].
+
+        "Check if the player is trying to power on the elevator"
+        (query = (InteractableFactory elevator getName)) ifTrue: [
+            self tryPowerOnElevator.
+            ^nil.
+        ].
+
+        Transcript show: 'Can''t power this on.'; cr.
+        ^nil.
+    ]
+
+    tryPowerOnGenerator [
+        |generator cellCount|
+        generator := self getGame getAllRooms getGeneratorRoom getItemByName: InteractableFactory generator getName.
+
+        "already on"
+        (self getGame getGeneratorOn) ifTrue: [
+            Transcript show: 'The air vibrates with renewed energy, and the machinery''s gentle rumble echoes through the entire lab.'; cr.
+            ^nil.
+        ].
+
+        "no power cells in equipment"
+        (self getGame inventoryContains: InteractableFactory powerCell getName) ifFalse: [
+            Transcript show: 'Power remains elusive without the necessary cells. Find and install them to awaken this dormant machine.'; cr.
+            ^nil.
+        ].
+
+        "there is a power cell entry, check how many cells"
+        cellCount := (self getGame getEntryOrNil: InteractableFactory powerCell getName) getCount.
+
+        "enough cells"
+        cellCount = 2 ifTrue: [
+            self printLines: #('With a satisfying click, you slot the power cells into place.'
+                    'The generator springs to life with a reassuring hum. Lights flicker on, flooding the room with a steady glow.'
+                    'The air vibrates with renewed energy, and the machinery''s gentle rumble signals success, powering up the entire lab.').
+            self getGame setGeneratorOn: true.
+            generator setDescription: DescriptionFactory generatorOn.
+        ]
+
+        "not enough cells"
+        ifFalse: [
+            Transcript show: 'Power remains elusive without the necessary cells. Find and install them to awaken this dormant machine.'; cr.
+        ]
+    ]
+
+    tryPowerOnElevator [
+        | elevator securityRoomMsg |
+
+        elevator := self getGame getAllRooms getExitRoom getItemByName: InteractableFactory elevator getName.
+        securityRoomMsg := 'You hear an unpleasant <buzz>, looks like the backup power supply system is not enough to power the elevator. It needs more juice!'.
+
+        "Check if the player is in the Security Room"
+        (self getGame getCurrentRoom getName) = (RoomFactory securityRoom getName) ifTrue: [
+            
+            "Check if the elevator is already powered"
+            (self getGame getElevatorOn) ifTrue: [
+                Transcript show: 'It is already powered, it really won''t work any better if you spam this button...'; cr.
+                ^nil.
+            ].
+
+            "Check if the generator is off"
+            (self getGame getGeneratorOn) ifFalse: [
+                Transcript show: securityRoomMsg; cr.
+                ^nil.
+            ].
+
+            "Power on the elevator"
+            Transcript show: 'You hear a satisfying <click>. The elevator powers on, ready to take you to new heights!'; cr.
+            self getGame setElevatorOn: true.
+            elevator setDescription: DescriptionFactory elevatorOn.
+
+        ] ifFalse: [
+            Transcript show: 'How?'; cr.
+        ].
+    ]
+
+    handleEnterPin: cmd [
+        |pin path|
+        
+        "wrong room"
+        (self getGame getCurrentRoom getName = RoomFactory lockerRoom getName) ifFalse: [
+            Transcript show: 'Where?'; cr.
+            ^nil.
+            ].
+
+        "right room"
+        pin := cmd copyFrom: 11.
+        (pin = '852611') ifTrue: [
+            Transcript show: 'The light on the lock blinks green, it buzzes and unlocks. Correct!'; cr.
+            path := self getGame getAllRooms getLockerRoom getDirections at: 'north'.
+            path setIsLocked: false.
+        ] ifFalse: [
+            Transcript show: 'The light on the lock blinks red. The provided code was incorrect.'; cr.
+                ].
+    ]
+
+
     handleUnlock: cmd [
         |query room path key validQuery compartment g|  
         room := self getGame getCurrentRoom.
@@ -393,6 +510,7 @@ Object subclass: GameController [
                     self printLines: #('You slide the crowbar between the vent door and its door frame'
                                 'and push with a lot of force. The vent swings open!').
                     g setVentBlocked: false.
+                    self changeVentHints.
                     self handleUnlock: 'unlock east'.
                 ] ifFalse: [
                     self printLines: #('The vent is closed shut and the door doesn''t seem to budge.'
@@ -403,6 +521,17 @@ Object subclass: GameController [
 
 
         validQuery ifFalse: [Transcript show: 'I don''t see that here'; cr].
+    ]
+
+    changeVentHints [
+        "called after the vents are unlocked using the crowbar"
+        |newHint rooms grVent crVent|
+        newHint := HintFactory ventUnlocked.
+        rooms := self getGame getAllRooms.
+        grVent := rooms getGeneratorRoom getItemByName: (InteractableFactory ventEntrance getName).
+        crVent := rooms getComputerRoom getItemByName: (InteractableFactory ventEntrance getName).
+        grVent setHint: newHint.
+        crVent setHint: newHint.
     ]
 ]
 

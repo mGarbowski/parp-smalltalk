@@ -216,12 +216,11 @@ Object subclass: RoomFactory [
             name: 'exit room'
             description: #(
                 'As you''re crawling out of the ventilation shaft, you notice an elevator.'
-                'Finally, a way out of this maze!'
+                'Finally, a way out of this maze! You notice something shiny on the floor - it''s a power cell!'
             )
             hint: #('You can interact with vent and elevator').
         r getInteractables add: InteractableFactory elevator.
         r getItems add: InteractableFactory powerCell.
-        r getInteractables add: InteractableFactory elevator.
         ^r
     ]
 
